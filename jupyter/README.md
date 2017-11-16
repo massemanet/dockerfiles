@@ -4,7 +4,7 @@ Version:v0.6.0
 
 to build;
 
-```docker build -t julia:0.6.0 <this_file>```
+```docker build -t julia:0.6.0 Dockerfile```
 
 to run (change ```/tmp/julia``` to a host dir);
 
