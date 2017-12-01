@@ -45,14 +45,15 @@ case "$1" in
     "shell" | "bash")
         go "-it" "/bin/bash"
         ;;
-    "julia" | "repl")
+    "" | "julia" | "repl")
         go "-it" "/opt/julia/bin/julia"
         ;;
-    "" | "qtconsole")
-        go "-d" ""
+    "qt" | "qtconsole")
+        go "-d" "$CONDAPATH/jupyter-qtconsole --kernel julia-0.6"
         ;;
     "jupyter")
-        go "-d" "$CONDAPATH/jupyter notebook --allow-root --no-browser --ip=0.0.0.0  --NotebookApp.token=''"
+        ARGS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
+        go "-d" "$CONDAPATH/jupyter notebook" "$ARGS"
         ;;
     "build")
         docker build --rm -t julia:0.6.1 $(dirname $0)

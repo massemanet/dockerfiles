@@ -1,7 +1,8 @@
 FROM ubuntu:17.10
 
-ENV JULIAREPO https://julialang-s3.julialang.org/bin/linux/x64/0.6
-ENV JULIAVSN 0.6.1
+ENV JULIAS 0.6
+ENV JULIAL 0.6.1
+ENV JULIAREPO https://julialang-s3.julialang.org/bin/linux/x64/${JULIAS}
 
 RUN apt-get update \
  && apt-get upgrade \
@@ -14,6 +15,7 @@ RUN apt-get install -y \
       ca-certificates \
       curl \
       libpython3-dev \
+      libpython-dev \
       python3-matplotlib \
       python3-qtconsole \
       python3-notebook \
@@ -21,7 +23,7 @@ RUN apt-get install -y \
  && apt-get clean
 
 RUN mkdir -p /opt/julia \
- && curl -v -L ${JULIAREPO}/julia-${JULIAVSN}-linux-x86_64.tar.gz | \
+ && curl -v -L ${JULIAREPO}/julia-${JULIAL}-linux-x86_64.tar.gz | \
         tar -C /opt/julia -x -z --strip-components=1 -f - \
  && /opt/julia/bin/julia -e 'Pkg.add("IJulia")' \
  && /opt/julia/bin/julia -e 'Pkg.add("PyPlot")' \
@@ -42,4 +44,4 @@ RUN mkdir -p /opt/julia \
 EXPOSE 8888
 WORKDIR /home/julia
 
-CMD /root/.julia/v0.6/Conda/deps/usr/bin/jupyter-qtconsole --kernel julia-0.6
+CMD /bin/bash
