@@ -23,23 +23,18 @@ RUN apt-get install -y \
  && apt-get clean
 
 RUN mkdir -p /opt/julia \
+ && mkdir -p /home/julia \
  && curl -v -L ${JULIAREPO}/julia-${JULIAL}-linux-x86_64.tar.gz | \
         tar -C /opt/julia -x -z --strip-components=1 -f - \
- && /opt/julia/bin/julia -e 'Pkg.add("IJulia")' \
- && /opt/julia/bin/julia -e 'Pkg.add("PyPlot")' \
- && /opt/julia/bin/julia -e 'Pkg.add("Plots")' \
- && /opt/julia/bin/julia -e 'Pkg.add("DataFrames")' \
- && /opt/julia/bin/julia -e 'Pkg.add("RDatasets")' \
- && /opt/julia/bin/julia -e 'Pkg.add("StatPlots")' \
- && /opt/julia/bin/julia -e 'Pkg.add("GR")' \
- && /opt/julia/bin/julia -e 'Pkg.build("IJulia")' \
- && /opt/julia/bin/julia -e 'Pkg.build("PyPlot")' \
- && /opt/julia/bin/julia -e 'Pkg.build("Plots")' \
- && /opt/julia/bin/julia -e 'Pkg.build("DataFrames")' \
- && /opt/julia/bin/julia -e 'Pkg.build("RDatasets")' \
- && /opt/julia/bin/julia -e 'Pkg.build("StatPlots")' \
- && /opt/julia/bin/julia -e 'Pkg.build("GR")' \
- && mkdir -p /home/julia
+ && /opt/julia/bin/julia -e 'Pkg.add("IJulia")     ; Pkg.build("IJulia")' \
+ && /opt/julia/bin/julia -e 'Pkg.add("Plots")      ; Pkg.build("Plots")' \
+ && /opt/julia/bin/julia -e 'Pkg.add("DataFrames") ; Pkg.build("DataFrames")' \
+ && /opt/julia/bin/julia -e 'Pkg.add("RDatasets")  ; Pkg.build("RDatasets")' \
+ && /opt/julia/bin/julia -e 'Pkg.add("StatPlots")  ; Pkg.build("StatPlots")'
+
+ENV PYTHON python3
+RUN /opt/julia/bin/julia -e 'Pkg.add("PyPlot") ; Pkg.build("PyPlot")' \
+ && /opt/julia/bin/julia -e 'Pkg.add("GR")     ; Pkg.build("GR")'
 
 EXPOSE 8888
 WORKDIR /home/julia
