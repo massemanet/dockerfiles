@@ -5,55 +5,63 @@ function err() {
     exit 1
 }
 
-function ip () {
-    ifconfig | grep 'inet '| awk '{print $2}' | grep -v 127.0.0.1 | head -1
+function check() {
+    echo checking "$1"
+    $(type "$1" &>/dev/null) || err "please install $1"
+}
+
+function check_X() {
+    case "$(uname)" in
+        "Darwin")
+            check Xquartz
+            $(ps -ef | grep -q "bin/Xquart[z]") || open -Fga Xquartz.app
+            ;;
+        "Linux")
+            ;;
+    esac
+}
+
+function xconf() {
+    case "$(uname)" in
+        "Darwin")
+            IP=$(ifconfig | grep 'inet '| awk '{print $2}' | grep -v 127.0.0.1)
+            [ $(echo "$IP" | wc -w) == 1 ] || err "multiple IP addr: $IP"
+            echo "-e DISPLAY=$IP:0 \
+                  -e XAUTHORITY=/tmp/xauth -v ~/.Xauthority:/tmp/xauth"
+            ;;
+        "Linux")
+            echo "-v /tmp/.X11-unix:/tmp/.X11-unix \
+                  -e DISPLAY=unix$DISPLAY"
+            ;;
+    esac
 }
 
 function go() {
-    case "$(uname)" in
-        "Darwin")
-            $(type docker &>/dev/null) || err "no docker"
-            $(type Xquartz &>/dev/null) || err "no X"
-            $(ps -ef | grep -q "bin/Xquart[z]") || open -Fga Xquartz.app
-            docker run $1 --rm \
-                   -p 8888:8888 \
-                   -e XAUTHORITY=/tmp/xauth \
-                   -e DISPLAY=$(ip):0 \
-                   -v /tmp/julia:/home/julia \
-                   -v ~/.Xauthority:/tmp/xauth \
-                   julia:0.6.1 \
-                   $2
-            ;;
-        "Linux")
-            $(type docker &>/dev/null) || err "no docker"
-            docker run $1 --rm --net=host \
-                   -p 8888:8888 \
-                   -v /tmp/.X11-unix:/tmp/.X11-unix \
-                   -e DISPLAY=unix$DISPLAY \
-                   -v /tmp/julia:/home/julia \
-                   julia:0.6.1 \
-                   $2
-            ;;
-        *)
-            err "Unknown OS"
-    esac
+    INTERACTIVE="$1"
+    PORT="$2"
+    CMD="$3"
+    check docker
+    check_X
+    docker run --rm $INTERACTIVE $PORT $(xconf) -v /tmp/julia:/home/julia \
+           julia:0.6.1 \
+           $CMD
 }
 
 CONDAPATH="/root/.julia/v0.6/Conda/deps/usr/bin"
 
 case "$1" in
     "shell" | "bash")
-        go "-it" "/bin/bash"
+        go "-it" "" "/bin/bash"
         ;;
     "" | "julia" | "repl")
-        go "-it" "/opt/julia/bin/julia"
+        go "-it" "" "/opt/julia/bin/julia"
         ;;
     "qt" | "qtconsole")
-        go "-d" "$CONDAPATH/jupyter-qtconsole --kernel julia-0.6"
+        go "-d" "" "$CONDAPATH/jupyter-qtconsole --kernel julia-0.6"
         ;;
     "jupyter")
         ARGS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go "-d" "$CONDAPATH/jupyter notebook" "$ARGS"
+        go "-d" "-p 8888:8888" "$CONDAPATH/jupyter notebook $ARGS"
         ;;
     "build")
         docker build --rm -t julia:0.6.1 $(dirname $0)
