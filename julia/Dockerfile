@@ -1,5 +1,7 @@
 FROM ubuntu:17.10
 
+ARG JULIA_TARBALL
+
 RUN apt-get update \
  && apt-get upgrade \
         -y \
