@@ -64,7 +64,10 @@ case "$1" in
         go "-d" "-p 8888:8888" "$CONDAPATH/jupyter notebook $ARGS"
         ;;
     "build")
-        docker build --rm -t julia:0.6.1 $(dirname $0)
+        JULIA_URL=https://julialang-s3.julialang.org/bin/linux/x64/0.6/
+        JULIA_TARBALL=julia-0.6.2-linux-x86_64.tar.gz
+        BUILDARG="--build-arg=JULIA_TARBALL=JULIA_URL/$JULIA_TARBALL"
+        docker build --rm $BUILDARG -t julia:0.6.2 $(dirname $0)
         ;;
     *)
         err "unrecognized command: $1"

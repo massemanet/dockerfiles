@@ -1,9 +1,5 @@
 FROM ubuntu:17.10
 
-ENV JULIAS 0.6
-ENV JULIAL 0.6.1
-ENV JULIAREPO https://julialang-s3.julialang.org/bin/linux/x64/${JULIAS}
-
 RUN apt-get update \
  && apt-get upgrade \
         -y \
@@ -24,7 +20,7 @@ RUN apt-get install -y \
 
 RUN mkdir -p /opt/julia \
  && mkdir -p /home/julia \
- && curl -v -L ${JULIAREPO}/julia-${JULIAL}-linux-x86_64.tar.gz | \
+ && curl -v -L ${JULIA_TARBALL} | \
         tar -C /opt/julia -x -z --strip-components=1 -f - \
  && /opt/julia/bin/julia -e 'Pkg.add("IJulia")     ; Pkg.build("IJulia")' \
  && /opt/julia/bin/julia -e 'Pkg.add("Plots")      ; Pkg.build("Plots")' \
