@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ue
+
 function err() {
     echo "$1"
     exit 1
@@ -21,11 +23,19 @@ function check_X() {
     esac
 }
 
+function darwin_ip() {
+    IP=$(ifconfig | grep 'inet '| awk '{print $2}' | grep -v 127.0.0.1)
+    if [ $(echo "$IP" | wc -w) == 1 ]; then
+        echo $IP
+    else
+        err "multiple IP addr: $IP"
+    fi
+}
+
 function xconf() {
     case "$(uname)" in
         "Darwin")
-            IP=$(ifconfig | grep 'inet '| awk '{print $2}' | grep -v 127.0.0.1)
-            [ $(echo "$IP" | wc -w) == 1 ] || err "multiple IP addr: $IP"
+            IP=$(darwin_ip)
             echo "-e DISPLAY=$IP:0 \
                   -e XAUTHORITY=/tmp/xauth -v $HOME/.Xauthority:/tmp/xauth"
             ;;
@@ -43,13 +53,13 @@ function vsn() {
 }
 
 function go() {
-    INTERACTIVE="$1"
-    PORT="$2"
-    CMD="$3"
+    FLAGS="$1"
+    CMD="$2"
     VSN=$(vsn)
+    XCONF=$(xconf)
     check docker
     check_X
-    docker run --rm $INTERACTIVE $PORT $(xconf) -v /tmp/julia:/home/julia \
+    docker run --rm $FLAGS $XCONF -v /tmp/julia:/home/julia \
            julia:$VSN \
            $CMD
 }
@@ -59,21 +69,22 @@ function tarball() {
     curl -sL $DLPAGE | grep -oE "https://[ -~]+linux-x86_64.tar.gz" | sort -u
 }
 
-CONDAPATH="/root/.julia/v0.6/Conda/deps/usr/bin"
+CONDAPATH=/opt/conda/bin
+JULIAPATH=/opt/julia/bin
 
 case "$1" in
     "shell" | "bash")
-        go "-it" "" "/bin/bash"
+        go "-it" "/bin/bash"
         ;;
     "" | "julia" | "repl")
-        go "-it" "" "/opt/julia/bin/julia"
+        go "-it" "$JULIAPATH/julia"
         ;;
     "qt" | "qtconsole")
-        go "-d" "" "$CONDAPATH/jupyter-qtconsole --kernel julia-0.6"
+        go "-d" "$CONDAPATH/jupyter-qtconsole --kernel julia-0.6"
         ;;
     "jupyter")
         ARGS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go "-d" "-p 8888:8888" "$CONDAPATH/jupyter notebook $ARGS"
+        go "-d -p 8888:8888" "$CONDAPATH/jupyter notebook $ARGS"
         ;;
     "build")
         TARBALL=$(tarball)

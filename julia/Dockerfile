@@ -34,6 +34,8 @@ ENV PYTHON python3
 RUN /opt/julia/bin/julia -e 'Pkg.add("PyPlot") ; Pkg.build("PyPlot")' \
  && /opt/julia/bin/julia -e 'Pkg.add("GR")     ; Pkg.build("GR")'
 
+RUN ln -s /root/.julia/*/Conda/deps/usr /opt/conda
+
 EXPOSE 8888
 WORKDIR /home/julia
 
