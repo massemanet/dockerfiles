@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 
+set -e
+
 function err() {
     echo "$1"
     exit 1
 }
 
 function check() {
-    echo checking "$1"
+    echo -n "checking ${1}..."
     type "$1" &>/dev/null || err "please install $1"
+    echo " ok"
 }
 
 function check_X() {
@@ -22,13 +25,19 @@ function check_X() {
 }
 
 function darwin_ip() {
-    declare -n r=$1
-    r=$(ifconfig | grep 'inet '| awk '{print $2}' | grep -v 127.0.0.1 | tail -1)
-    [ -z "$r" ] && err "no IP number..."
+    local r
+    for if in $(ifconfig -ul inet); do
+        r=$(ifconfig $if | grep -Eo "inet .* broadcast" | cut -f2 -d" ")
+        if [ -n "$r" ]; then
+            eval $1="'$r'"
+            break
+        fi
+    done
+#    [ -z "$r" ] && err "no IP number..."
 }
 
 function xconf() {
-    declare -n r=$1
+    local r
     case "$(uname)" in
         "Darwin")
             darwin_ip IP
@@ -40,57 +49,58 @@ function xconf() {
                -v /tmp/.X11-unix:/tmp/.X11-unix"
             ;;
     esac
+    eval $1="'$r'";
 }
 
 function tag() {
-    declare -n r=$1
+    local r
     r=$(docker images | grep julia | awk '{print $2}' | sort -V | tail -1)
     [ -z "$r" ] && err "no julia image, build first."
+    eval $1="'$r'";
 }
 
 function go() {
-    FLAGS="$1"
-    CMD="$2"
+    local TAG XCONF
+    local FLAGS="$1"
+    local CMD="$2"
     tag TAG
     xconf XCONF
     check docker
     check_X
-    docker run --rm $FLAGS $XCONF -v /tmp/julia:/home/julia \
-           julia:$TAG \
-           $CMD
+    docker run --rm $FLAGS $XCONF -v /tmp/julia:/opt/julia/tmp julia:$TAG $CMD
 }
 
 function tarball() {
-    declare -n r=$1
-    DLPAGE=https://julialang.org/downloads
-    r=$(curl -sL $DLPAGE | grep -oE "https://[^\"]+linux-x86_64.tar.gz" | sort -u)
+    local DLPAGE=https://julialang.org/downloads
+    local RE="https://[^\"]+linux-x86_64.tar.gz"
+    local r=$(curl -sL $DLPAGE | grep -oE "$RE" | sort -u)
     [ -z "$r" ] && err "no julia tarball at $DLPAGE."
+    eval $1="'$r'";
 }
 
 function vsn() {
-    declare -n r=$1
-    r=$(echo $2 | grep -o "[0-9]\.[0-9]\.[0-9]")
+    local r=$(echo $2 | grep -o "[0-9]\.[0-9]\.[0-9]")
     [ -z "$r" ] && err "no version number in tarball name $2."
+    eval $1="'$r'";
 }
-
-CONDAPATH=/opt/conda/bin
-JULIAPATH=/opt/julia/bin
 
 case "$1" in
     "shell" | "bash")
         go "-it" "/bin/bash"
         ;;
     "" | "julia" | "repl")
-        go "-it" "$JULIAPATH/julia"
+        go "-it" "julia"
         ;;
     "qt" | "qtconsole")
-        go "-d" "$CONDAPATH/jupyter-qtconsole --kernel julia-0.6"
+        go "-d" "jupyter-qtconsole --kernel julia-0.6"
         ;;
     "jupyter")
-        ARGS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go "-d -p 8888:8888" "$CONDAPATH/jupyter notebook $ARGS"
+        AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
+        go "-d -p 8888:8888" "jupyter notebook $AS"
         ;;
     "build")
+        check docker
+        check curl
         tarball TARBALL
         vsn VSN $TARBALL
         BUILDARG="--build-arg JULIA_TARBALL=$TARBALL"
