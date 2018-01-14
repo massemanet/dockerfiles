@@ -71,10 +71,12 @@ function go() {
 }
 
 function tarball() {
+    check curl
     local DLPAGE=https://julialang.org/downloads
     local RE="https://[^\"]+linux-x86_64.tar.gz"
     local r=$(curl -sL $DLPAGE | grep -oE "$RE" | sort -u)
     [ -z "$r" ] && err "no julia tarball at $DLPAGE."
+    echo "found tarball: $r"
     eval $1="'$r'";
 }
 
@@ -100,7 +102,6 @@ case "$1" in
         ;;
     "build")
         check docker
-        check curl
         tarball TARBALL
         vsn VSN $TARBALL
         BUILDARG="--build-arg JULIA_TARBALL=$TARBALL"

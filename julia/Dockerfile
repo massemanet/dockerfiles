@@ -35,16 +35,16 @@ RUN mkdir -p /opt/julia/tmp \
       Pkg.add("GR")         ; Pkg.build("GR") ;\
       ENV["PYTHON"]="python3";\
       Pkg.add("PyPlot")     ; Pkg.build("PyPlot")' \
- && ln -s .julia/* /opt/julia_local \
+ && ln -s /root/.julia/v* /opt/julia_local \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
+
+ADD bashrc /root/.bashrc
 
 EXPOSE 8888
 
-WORKDIR /opt/julia/tmp
-
-ENV PROMPT_COMMAND 'LAST_EXIT=$? ; [ $LAST_EXIT == 0 ] && unset LAST_EXIT'
-ENV PS1 '\e[33mjulia\e[32m${LAST_EXIT:+\e[31m($LAST_EXIT)}$\e[0m '
-ENV JULIA_LOAD_PATH /opt/julia_local
 ENV PATH /opt/julia/bin:/opt/conda/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV JULIA_LOAD_PATH /opt/julia_local
+
+WORKDIR /opt/julia/tmp
 
 CMD /bin/bash
