@@ -7,6 +7,18 @@ function err() {
     exit 1
 }
 
+usage() {
+    echo "manage julia container. latest julia + jupyter, CSV, and plotting."
+    echo ""
+    echo "$0 help - this text"
+    echo "$0 bash [DIR] - start a shell, mount host DIR to container CWD"
+    echo "$0 julia [DIR] - start a julia repl, mount host DIR to container CWD"
+    echo "$0 qt [DIR] - start qtconsole, mount host DIR as container CWD"
+    echo "$0 notebook [DIR] - start jupyter on port 8888, mount host DIR"
+    echo "$0 build - build docker image from latest julia"
+    exit 0
+}
+
 function check() {
     echo -n "checking ${1}..."
     type "$1" &>/dev/null || err "please install $1"
@@ -61,13 +73,17 @@ function tag() {
 
 function go() {
     local TAG XCONF
-    local FLAGS="$1"
+    local USERFLAGS="$1"
     local CMD="$2"
-    tag TAG
-    xconf XCONF
+    local VOL="${3:-/tmp/julia}"
+    local FLAGS="--detach-keys ctrl-q,ctrl-q --rm -v ${VOL}:/opt/julia/tmp"
     check docker
     check_X
-    docker run --rm $FLAGS $XCONF -v /tmp/julia:/opt/julia/tmp julia:$TAG $CMD
+    tag TAG
+    xconf XCONF
+    echo "found julia:$TAG"
+    echo "mounting $VOL"
+    docker run $FLAGS $USERFLAGS $XCONF julia:$TAG $CMD
 }
 
 function tarball() {
@@ -83,22 +99,26 @@ function tarball() {
 function vsn() {
     local r=$(echo $2 | grep -o "[0-9]\.[0-9]\.[0-9]")
     [ -z "$r" ] && err "no version number in tarball name $2."
+    echo "julia version is $r"
     eval $1="'$r'";
 }
 
 case "$1" in
-    "shell" | "bash")
-        go "-it" "/bin/bash"
+    "" | "help" )
+        usage
         ;;
-    "" | "julia" | "repl")
-        go "-it" "julia"
+    "shell" | "bash")
+        go "-it" "/bin/bash" "$2"
+        ;;
+    "julia" | "repl")
+        go "-it" "julia" "$2"
         ;;
     "qt" | "qtconsole")
-        go "-d" "jupyter-qtconsole --kernel julia-0.6"
+        go "-d" "jupyter-qtconsole --kernel julia-0.6" "$2"
         ;;
-    "jupyter")
+    "notebook" | "jupyter")
         AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go "-d -p 8888:8888" "jupyter notebook $AS"
+        go "-d -p 8888:8888" "jupyter notebook $AS" "$2"
         ;;
     "build")
         check docker
