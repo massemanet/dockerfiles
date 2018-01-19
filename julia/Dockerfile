@@ -18,7 +18,7 @@ RUN apt-get update \
       python3-qtconsole \
       python3-notebook \
       sudo \
-      texlive \
+      texlive-xetex \
       unzip \
  && apt-get clean
 
