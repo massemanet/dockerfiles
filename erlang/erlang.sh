@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -eu
 
 function err() {
     echo "$1"
@@ -10,10 +10,10 @@ function err() {
 usage() {
     echo "manage erlang container."
     echo ""
-    echo "$0 help - this text"
-    echo "$0 bash [DIR] - start a shell, mount host DIR to container CWD"
-    echo "$0 erl [DIR] - start an erlang repl, mount host DIR to container CWD"
-    echo "$0 build - build docker image from latest erlang"
+    echo "- help - this text"
+    echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
+    echo "- erl [DIR] - start an erlang repl, mount host DIR to container CWD"
+    echo "- build - build docker image from latest erlang"
     exit 0
 }
 
@@ -64,8 +64,8 @@ function xconf() {
 
 function tag() {
     local r
-    r=$(docker images | grep julia | awk '{print $2}' | sort -V | tail -1)
-    [ -z "$r" ] && err "no julia image, build first."
+    r=$(docker images | grep erlang | awk '{print $2}' | sort -V | tail -1)
+    [ -z "$r" ] && err "no erlang image, build first."
     eval $1="'$r'";
 }
 
@@ -73,58 +73,51 @@ function go() {
     local TAG XCONF
     local USERFLAGS="$1"
     local CMD="$2"
-    local VOL="${3:-/tmp/julia}"
-    local FLAGS="--detach-keys ctrl-q,ctrl-q --rm -v ${VOL}:/opt/julia/tmp"
+    local VOL="$3"
+    local FLAGS="--detach-keys ctrl-q,ctrl-q --rm -v ${VOL}:/opt/erlang/tmp"
     check docker
     check_X
     tag TAG
     xconf XCONF
-    echo "found julia:$TAG"
+    echo "found erlang:$TAG"
     echo "mounting $VOL"
-    docker run $FLAGS $USERFLAGS $XCONF julia:$TAG $CMD
+    docker run $FLAGS $USERFLAGS $XCONF erlang:$TAG $CMD
 }
 
-function tarball() {
-    check curl
-    local DLPAGE=https://julialang.org/downloads
-    local RE="https://[^\"]+linux-x86_64.tar.gz"
-    local r=$(curl -sL $DLPAGE | grep -oE "$RE" | sort -u)
-    [ -z "$r" ] && err "no julia tarball at $DLPAGE."
-    echo "found tarball: $r"
-    eval $1="'$r'";
+function image() {
+    local r
+    exec 5>&1
+    r="$(docker build --rm $(dirname $0) | tee >(cat - >&5))"
+    exec 5<&-
+    r=$(grep -Eo "Successfully built [a-f0-9]+" <<< "$r" | cut -f3 -d" ")
+    eval $1="'$r'"
 }
 
 function vsn() {
-    local r=$(echo $2 | grep -o "[0-9]\.[0-9]\.[0-9]")
-    [ -z "$r" ] && err "no version number in tarball name $2."
-    echo "julia version is $r"
-    eval $1="'$r'";
+    local r="0.0.0"
+    local CMD="dpkg-query -l erlang-dev"
+    r=$(docker run -it "$2" $CMD | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+")
+    eval $1="'$r'"
 }
 
-case "$1" in
-    "" | "help" )
+CMD="${1:-help}"
+VOL="${2:-/tmp/erlang}"
+case "$CMD" in
+    "help")
         usage
         ;;
     "shell" | "bash")
-        go "-it" "/bin/bash" "$2"
+        go "-it" "/bin/bash" "$VOL"
         ;;
-    "julia" | "repl")
-        go "-it" "julia" "$2"
-        ;;
-    "qt" | "qtconsole")
-        go "-d" "jupyter-qtconsole --kernel julia-0.6" "$2"
-        ;;
-    "notebook" | "jupyter")
-        AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go "-d -p 8888:8888" "jupyter notebook $AS" "$2"
+    "erl" | "erlang" | "repl")
+        go "-it" "erl" "$VOL"
         ;;
     "build")
         check docker
-        tarball TARBALL
-        vsn VSN $TARBALL
-        BUILDARG="--build-arg JULIA_TARBALL=$TARBALL"
-        docker build --rm $BUILDARG -t julia:$VSN $(dirname $0)
+        image IMAGE
+        vsn VSN $IMAGE
+        docker tag $IMAGE erlang:$VSN
         ;;
     *)
-        err "unrecognized command: $1"
+        err "unrecognized command: $CMD"
 esac

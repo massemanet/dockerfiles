@@ -9,14 +9,16 @@ RUN apt-get update \
  && apt-get clean
 
 RUN mkdir -p /opt/erlang/tmp \
- && curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb \
-    > /tmp/erlang-solutions_1.0_all.deb \
+ && curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
+     /tmp/erlang-solutions_1.0_all.deb \
  && dpkg -i /tmp/erlang-solutions_1.0_all.deb \
  && apt-get install -y \
      erlang-common-test erlang-eunit erlang-dialyzer \
      erlang-mode erlang-parsetools erlang-dev
 
-ADD bashrc /root/.bashrc
+ADD bashrc           /root/.bashrc
+ADD erlang           /root/.erlang
+ADD user_default.erl /root/user_default.erl
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
