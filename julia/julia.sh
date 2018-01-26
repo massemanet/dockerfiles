@@ -29,6 +29,10 @@ function check_X() {
     case "$(uname)" in
         "Darwin")
             check Xquartz
+            xhost +127.0.0.1
+            defaults org.macosforge.xquartz.X11 app_to_run /usr/bin/true
+            defaults org.macosforge.xquartz.X11 no_auth 1
+            defaults org.macosforge.xquartz.X11 nolisten_tcp 0
             ps -ef | grep -q "bin/Xquart[z]" || open -Fga Xquartz.app
             ;;
         "Linux")
@@ -36,25 +40,12 @@ function check_X() {
     esac
 }
 
-function darwin_ip() {
-    local r
-    for if in $(ifconfig -ul inet); do
-        r=$(ifconfig $if | grep -Eo "inet .* broadcast" | cut -f2 -d" ")
-        if [ -n "$r" ]; then
-            eval $1="'$r'"
-            break
-        fi
-    done
-#    [ -z "$r" ] && err "no IP number..."
-}
-
 function xconf() {
     local r
     case "$(uname)" in
         "Darwin")
-            darwin_ip IP
-            r="-e DISPLAY=$IP:0 \
-               -e XAUTHORITY=/tmp/xauth -v $HOME/.Xauthority:/tmp/xauth"
+            r="-e DISPLAY=docker.for.mac.host.internal:0 \
+               -v /tmp/.X11-unix:/tmp/.X11-unix"
             ;;
         "Linux")
             r="-e DISPLAY=unix$DISPLAY \
