@@ -18,9 +18,9 @@ function check_X() {
         "Darwin")
             check Xquartz
             xhost +127.0.0.1
-            defaults org.macosforge.xquartz.X11 app_to_run /usr/bin/true
-            defaults org.macosforge.xquartz.X11 no_auth 1
-            defaults org.macosforge.xquartz.X11 nolisten_tcp 0
+            defaults write org.macosforge.xquartz.X11 app_to_run /usr/bin/true
+            defaults write org.macosforge.xquartz.X11 no_auth 1
+            defaults write org.macosforge.xquartz.X11 nolisten_tcp 0
             ps -ef | grep -q "bin/Xquart[z]" || open -Fga Xquartz.app
             ;;
         "Linux")
