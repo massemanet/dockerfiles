@@ -5,7 +5,7 @@ RUN apt-get update \
       -o Dpkg::Options::="--force-confdef" \
       -o DPkg::Options::="--force-confold" \
  && apt-get install -y \
-     apt-file bash-completion curl emacs \
+     apt-file bash-completion curl emacs gosu \
  && apt-get clean
 
 RUN mkdir -p /opt/erlang/tmp \
@@ -24,4 +24,6 @@ ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /opt/erlang/tmp
 
-CMD /bin/bash
+COPY ../entrypoint.sh /root/entrypoint.sh
+
+ENTRYPOINT ["/root/entrypoint.sh"]

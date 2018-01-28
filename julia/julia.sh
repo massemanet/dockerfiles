@@ -32,7 +32,7 @@ function vsn() {
 }
 
 CMD="${1:-help}"
-VOL="${2:-/tmp/erlang}"
+VOL="${2:-/tmp/julia}"
 case "$CMD" in
     "help" )
         usage

@@ -10,6 +10,7 @@ RUN apt-get update \
       build-essential \
       ca-certificates \
       curl \
+      gosu \
       emacs \
       libpython3-dev \
       libpython-dev \
@@ -47,4 +48,6 @@ ENV JULIA_LOAD_PATH /opt/julia_local
 
 WORKDIR /opt/julia/tmp
 
-CMD /bin/bash
+COPY ../entrypoint.sh /root/entrypoint.sh
+
+ENTRYPOINT ["/root/entrypoint.sh"]

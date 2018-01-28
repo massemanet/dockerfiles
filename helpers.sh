@@ -62,6 +62,7 @@ function go() {
     check_X
     find_tag TAG $TARGET
     xconf XCONF
+    mkdir -p "$VOL"
     echo "found $TARGET:$TAG"
     echo "mounting $VOL"
     docker run $FLAGS $USERFLAGS $XCONF $TARGET:$TAG $CMD

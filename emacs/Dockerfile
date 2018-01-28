@@ -5,7 +5,7 @@ RUN apt-get update \
       -o Dpkg::Options::="--force-confdef" \
       -o DPkg::Options::="--force-confold" \
  && apt-get install -y \
-      curl emacs git make python \
+      curl emacs git gosu make python \
  && apt-get clean
 
 RUN mkdir -p /opt/emacs/tmp \
@@ -23,4 +23,6 @@ ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /opt/emacs/tmp
 
-CMD /bin/bash
+COPY ../entrypoint.sh /root/entrypoint.sh
+
+ENTRYPOINT ["/root/entrypoint.sh"]
