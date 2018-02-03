@@ -21,7 +21,7 @@ function vsn() {
 }
 
 CMD="${1:-help}"
-VOL="${2:-/tmp/erlang}"
+VOL="${2:-/tmp/emacs}"
 case "$CMD" in
     "help" )
         usage
