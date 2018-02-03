@@ -23,6 +23,8 @@ ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /opt/emacs/tmp
 
-COPY ../entrypoint.sh /root/entrypoint.sh
+COPY ./entrypoint.sh /root/entrypoint.sh
 
 ENTRYPOINT ["/root/entrypoint.sh"]
+
+CMD /bin/bash

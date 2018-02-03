@@ -24,6 +24,6 @@ ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /opt/erlang/tmp
 
-COPY ../entrypoint.sh /root/entrypoint.sh
+COPY entrypoint.sh /root/entrypoint.sh
 
 ENTRYPOINT ["/root/entrypoint.sh"]

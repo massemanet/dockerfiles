@@ -48,6 +48,6 @@ ENV JULIA_LOAD_PATH /opt/julia_local
 
 WORKDIR /opt/julia/tmp
 
-COPY ../entrypoint.sh /root/entrypoint.sh
+COPY entrypoint.sh /root/entrypoint.sh
 
 ENTRYPOINT ["/root/entrypoint.sh"]
