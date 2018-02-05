@@ -1,9 +1,6 @@
 FROM ubuntu:17.10
 
 RUN apt-get update \
- && apt-get upgrade -y \
-      -o Dpkg::Options::="--force-confdef" \
-      -o DPkg::Options::="--force-confold" \
  && apt-get install -y \
      apt-file bash-completion curl emacs gosu \
  && apt-get clean

@@ -1,9 +1,6 @@
 FROM ubuntu:17.10
 
 RUN apt-get update \
- && apt-get upgrade -y \
-      -o Dpkg::Options::="--force-confdef" \
-      -o DPkg::Options::="--force-confold" \
  && apt-get install -y \
       curl emacs git gosu make python \
  && apt-get clean

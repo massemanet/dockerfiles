@@ -3,9 +3,6 @@ FROM ubuntu:17.10
 ARG JULIA_TARBALL
 
 RUN apt-get update \
- && apt-get upgrade -y \
-      -o Dpkg::Options::="--force-confdef" \
-      -o DPkg::Options::="--force-confold" \
  && apt-get install -y \
       build-essential \
       ca-certificates \
