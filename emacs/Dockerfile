@@ -2,26 +2,30 @@ FROM ubuntu:17.10
 
 RUN apt-get update \
  && apt-get install -y \
-      curl emacs git gosu make python \
- && apt-get clean
+      aspell \
+      curl \
+      emacs \
+      git \
+      gosu \
+      make \
+      python \
+ && apt-get clean \
+ && mkdir -p /opt/wrk
 
-RUN mkdir -p /opt/emacs/tmp \
- && curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
+# the entrypoint will move these files after it has creates a user.
+COPY includes/ /opt/includes/
 
-ADD bashrc    /root/.bashrc
-ADD init.el   /root/.emacs.d/init.el
-ADD Cask      /root/.emacs.d/Cask
-ADD fdlcap.el /root/.emacs/d/fdlcap/fdlcap.el
-
-RUN cd /root/.emacs.d \
- && /root/.cask/bin/cask install
+# use cask to compile emacs libs. then move it to /opt and change permissions.
+# the entrypoint script will create a user and move it to the right place.
+RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
+ && mv /opt/includes/Cask /root/.emacs.d/ \
+ && cd /root/.emacs.d && /root/.cask/bin/cask install \
+ && cd /root && mv .emacs.d /opt/includes && chmod -R +r /opt/includes/.emacs.d
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
-WORKDIR /opt/emacs/tmp
+WORKDIR /opt/wrk
 
-COPY ./entrypoint.sh /root/entrypoint.sh
-
-ENTRYPOINT ["/root/entrypoint.sh"]
+ENTRYPOINT ["/opt/includes/entrypoint.sh"]
 
 CMD /bin/bash

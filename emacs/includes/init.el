@@ -304,7 +304,7 @@
     ("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(package-selected-packages
    (quote
-    (async cask company dash erlang f flycheck ghub helm helm-core magit-popup with-editor color-theme-sanityinc-solarized yaml-mode solarized-theme smart-mode-line purescript-mode pallet nyan-mode markdown-mode magit json-mode js2-mode highlight-parentheses gruvbox-theme go-mode flymake-jshint flycheck-rebar3 flycheck-elixir flycheck-demjsonlint exec-path-from-shell eproject edts alchemist)))
+    (async cask company dash f flycheck ghub magit-popup with-editor color-theme-sanityinc-solarized yaml-mode solarized-theme smart-mode-line pallet nyan-mode markdown-mode magit json-mode js2-mode highlight-parentheses gruvbox-theme flymake-jshint flycheck-demjsonlint exec-path-from-shell eproject )))
  '(pos-tip-background-color "#073642")
  '(pos-tip-foreground-color "#93a1a1")
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))

@@ -52,10 +52,9 @@ function find_image() {
 
 function flags() {
     local r
-    local TARGET="$2"
-    local VOL="$3"
+    local VOL="$2"
     local DETACH="--detach-keys ctrl-q,ctrl-q"
-    local WRKDIR="/opt/$TARGET/tmp"
+    local WRKDIR="/opt/wrk"
     if uname -a | grep -q 'Microsoft'; then
         VOL="$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")"
         r="$DETACH -v \"$VOL\":$WRKDIR"
@@ -74,7 +73,7 @@ function go() {
     check docker
     find_image IMAGE "$TARGET"
     xconf XFLAGS
-    flags FLAGS "$TARGET" "$VOL"
+    flags FLAGS "$VOL"
     echo "found image $IMAGE"
     echo "mounting $VOL"
     eval docker run "$FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"

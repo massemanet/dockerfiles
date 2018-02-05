@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eu
+
 # shellcheck source=../helpers.sh
 . "$(dirname $0)/../helpers.sh"
 
@@ -22,7 +24,7 @@ function vsn() {
     eval "$1='$r'"
 }
 
-CMD="${1:-help}"
+CMD="${1:-emacs}"
 VOL="${2:-/tmp/emacs}"
 case "$CMD" in
     "help" )
