@@ -37,7 +37,7 @@ function vsn() {
     eval "$1='$r'";
 }
 
-CMD="${1:julia}"
+CMD="${1:-julia}"
 VOL="${2:-/tmp/julia}"
 case "$CMD" in
     "help")

@@ -13,11 +13,11 @@ RUN apt-get update \
  && apt-get clean \
  && mkdir -p /opt/wrk
 
-# the entrypoint will move these files after it has creates a user.
+# the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
 
 # use cask to compile emacs libs. then move it to /opt and change permissions.
-# the entrypoint script will create a user and move it to the right place.
+# the entrypoint script will create a user and move them to the right place.
 RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && mv /opt/includes/Cask /root/.emacs.d/ \
  && cd /root/.emacs.d && /root/.cask/bin/cask install \
