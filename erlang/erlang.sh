@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eu
+
 # shellcheck source=../helpers.sh
 . "$(dirname $0)/../helpers.sh"
 
@@ -17,11 +19,12 @@ function vsn() {
     local r="0.0.0"
     local IMAGE="$2"
     local C=("dpkg-query" "-l" "erlang-dev")
-    r="$(docker run -it "$2" "${C[@]}" | grep -Eo "[0-9]+\\.[0-9]+\\.[0-9]+")"
+
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
     eval "$1='$r'"
 }
 
-CMD="${1:-help}"
+CMD="${1:-erlang}"
 VOL="${2:-/tmp/erlang}"
 case "$CMD" in
     "help")
