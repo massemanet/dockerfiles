@@ -16,7 +16,7 @@ usage() {
 }
 
 function vsn() {
-    local r
+    local r="0.0.0"
     local IMAGE="$2"
     local C=("emacs" "--version")
 
@@ -27,7 +27,7 @@ function vsn() {
 CMD="${1:-emacs}"
 VOL="${2:-/tmp/emacs}"
 case "$CMD" in
-    "help" )
+    "help")
         usage
         ;;
     "shell" | "bash")

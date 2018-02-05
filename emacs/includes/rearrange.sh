@@ -1,8 +1,9 @@
 #!/bin/bash
 
 echo "$(id) : $HOME"
-cp -r /opt/includes/.emacs.d/ "$HOME"
-cp /opt/includes/init.el "$HOME/.emacs.d"
+cd /opt/includes || exit 1
+cp -r .emacs.d/ "$HOME"
 mkdir "$HOME/.emacs.d/fdlcap"
-cp /opt/includes/fdlcap.el "$HOME/.emacs.d/fdlcap"
-cp /opt/includes/bashrc "$HOME/.bashrc"
+cp init.el "$HOME/.emacs.d"
+cp fdlcap.el "$HOME/.emacs.d/fdlcap"
+cp bashrc "$HOME/.bashrc"
