@@ -22,7 +22,7 @@ function xconf() {
                 defaults write org.macosforge.xquartz.X11 app_to_run /usr/bin/true
                 defaults write org.macosforge.xquartz.X11 no_auth 1
                 defaults write org.macosforge.xquartz.X11 nolisten_tcp 0
-                ps -ef | grep -q "bin/Xquart[z]" || open -Fga Xquartz.app
+                pgrep -q Xquartz || open -Fga Xquartz.app
                 r="-e DISPLAY=docker.for.mac.host.internal:0 \
                    -v /tmp/.X11-unix:/tmp/.X11-unix"
             else
@@ -38,16 +38,16 @@ function xconf() {
             fi
             ;;
     esac
-    eval $1="'$r'";
+    eval "$1='$r'";
 }
 
 function find_image() {
     local r
     local TARGET="$2"
-    r=$(docker images | grep "$TARGET" |\
+    r=$(docker images | grep -E "^$TARGET" |\
         awk '{print $2,$3}' | sort -V | tail -1 | cut -f2 -d" ")
     [ -z "$r" ] && err "no $TARGET image, build first."
-    eval $1="'$r'";
+    eval "$1='$r'";
 }
 
 function flags() {
@@ -57,12 +57,12 @@ function flags() {
     local DETACH="--detach-keys ctrl-q,ctrl-q"
     local WRKDIR="/opt/$TARGET/tmp"
     if uname -a | grep -q 'Microsoft'; then
-        VOL="$(sed 's|/mnt/\([a-z]\)|\1:|' <<< $VOL)"
+        VOL="$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")"
         r="$DETACH -v \"$VOL\":$WRKDIR"
     else
         r="--rm $DETACH -v \"$VOL\":$WRKDIR"
     fi
-    eval $1="'$r'";
+    eval "$1='$r'";
 }
 
 function go() {
@@ -80,15 +80,17 @@ function go() {
     eval docker run "$FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"
 }
 
-function image() {
+function build() {
     local r
-    local ARGS=${2:-""}
+    local ARG="${2:-""}"
+    local C=() && [ -n "$ARG" ] && C=("--build-arg" "$ARG")
+
     check docker
     exec 5>&1
-    r="$(docker build $ARGS --rm $(dirname $0) | tee >(cat - >&5))"
+    r="$(docker build "${C[@]}" --rm "$(dirname "$0")" | tee >(cat - >&5))"
     exec 5<&-
     r=$(grep -Eo "Successfully built [a-f0-9]+" <<< "$r" | cut -f3 -d" ")
-    eval $1="'$r'"
+    eval "$1='$r'"
 }
 
 function tag() {

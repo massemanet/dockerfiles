@@ -1,13 +1,13 @@
 #!/bin/bash
 
-uid=$(ls -ldn | cut -f3 -d" ")
-gid=$(ls -ldn | cut -f4 -d" ")
+uid=$(stat --format "%u" .)
+gid=$(stat --format "%g" .)
 
 echo "uid=$uid, gid=$gid"
 
-groupadd -g $gid user
-useradd -s /bin/bash -u $uid -g $gid -m user
+grep -q ":${gid}:" /etc/group || groupadd -g "$gid" guser
+id "$uid" &>/dev/null || useradd -s /bin/bash -u "$uid" -g "$gid" -m duser
 
-echo "added user ($uid:$gid)"
+name="$(id -un "$uid")"
 
-exec gosu user "$@"
+exec gosu "$name" "$@"

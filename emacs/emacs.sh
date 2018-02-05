@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck source=../helpers.sh
 . "$(dirname $0)/../helpers.sh"
 
 usage() {
@@ -15,9 +16,10 @@ usage() {
 function vsn() {
     local r
     local IMAGE="$2"
-    local CMD="emacs --version"
-    r=$(docker run "$IMAGE" $CMD | grep -oE "[0-9]+\.[0-9]+\.[0-9]+")
-    eval $1="'$r'"
+    local C=("emacs" "--version")
+
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
+    eval "$1='$r'"
 }
 
 CMD="${1:-help}"
@@ -33,7 +35,7 @@ case "$CMD" in
         go emacs "-d" "emacs" "$VOL"
         ;;
     "build")
-        image IMAGE
+        build IMAGE
         vsn VSN "$IMAGE"
         tag "$IMAGE" "emacs:$VSN"
         ;;

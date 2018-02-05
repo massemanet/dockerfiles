@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck source=../helpers.sh
 . "$(dirname $0)/../helpers.sh"
 
 usage() {
@@ -15,9 +16,9 @@ usage() {
 function vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local CMD="dpkg-query -l erlang-dev"
-    r=$(docker run -it "$2" $CMD | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+")
-    eval $1="'$r'"
+    local C=("dpkg-query" "-l" "erlang-dev")
+    r="$(docker run -it "$2" "${C[@]}" | grep -Eo "[0-9]+\\.[0-9]+\\.[0-9]+")"
+    eval "$1='$r'"
 }
 
 CMD="${1:-help}"
@@ -33,7 +34,7 @@ case "$CMD" in
         go erlang "-it" "erl" "$VOL"
         ;;
     "build")
-        image IMAGE
+        build IMAGE
         vsn VSN "$IMAGE"
         tag "$IMAGE" "erlang:$VSN"
         ;;
