@@ -25,7 +25,8 @@ RUN apt-get update \
 COPY includes/ /opt/includes/
 
 # install julia with basic data science support
-RUN curl -v -L ${JULIA_TARBALL} | \
+RUN mkdir -p /opt/julia \
+ && curl -v -L ${JULIA_TARBALL} | \
       tar -C /opt/julia -x -z --strip-components=1 -f - \
  && /opt/julia/bin/julia -e \
      'Pkg.add("CSV")        ; Pkg.build("CSV") ;\
