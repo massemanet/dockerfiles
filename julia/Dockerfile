@@ -4,24 +4,28 @@ ARG JULIA_TARBALL
 
 RUN apt-get update \
  && apt-get install -y \
+      bash-completion \
       build-essential \
       ca-certificates \
       curl \
+      git \
       gosu \
-      emacs \
       libpython3-dev \
       libpython-dev \
       pandoc \
       python3-matplotlib \
       python3-qtconsole \
       python3-notebook \
-      sudo \
       texlive-xetex \
       unzip \
- && apt-get clean
+ && apt-get clean \
+ && mkdir -p /opt/wrk
 
-RUN mkdir -p /opt/julia/tmp \
- && curl -v -L ${JULIA_TARBALL} | \
+# the entrypoint will move these files after it has creates a user.
+COPY includes/ /opt/includes/
+
+# install julia with basic data science support
+RUN curl -v -L ${JULIA_TARBALL} | \
       tar -C /opt/julia -x -z --strip-components=1 -f - \
  && /opt/julia/bin/julia -e \
      'Pkg.add("CSV")        ; Pkg.build("CSV") ;\
@@ -36,15 +40,13 @@ RUN mkdir -p /opt/julia/tmp \
  && ln -s /root/.julia/v* /opt/julia_local \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
 
-ADD bashrc /root/.bashrc
-
 EXPOSE 8888
 
 ENV PATH /opt/julia/bin:/opt/conda/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ENV JULIA_LOAD_PATH /opt/julia_local
 
-WORKDIR /opt/julia/tmp
+WORKDIR /opt/wrk
 
-COPY entrypoint.sh /root/entrypoint.sh
+ENTRYPOINT ["/opt/includes/entrypoint.sh"]
 
-ENTRYPOINT ["/root/entrypoint.sh"]
+CMD /bin/bash

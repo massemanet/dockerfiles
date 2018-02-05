@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
+set -eu
+
 # shellcheck source=../helpers.sh
-. "$(dirname "$0")/../helpers.sh"
+. "$(dirname $0)/../helpers.sh"
 
 usage() {
     echo "manage julia container. latest julia + jupyter, CSV, and plotting."
@@ -35,10 +37,10 @@ function vsn() {
     eval "$1='$r'";
 }
 
-CMD="${1:-help}"
+CMD="${1:julia}"
 VOL="${2:-/tmp/julia}"
 case "$CMD" in
-    "help" )
+    "help")
         usage
         ;;
     "shell" | "bash")
