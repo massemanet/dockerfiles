@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+set -eu
+
+# shellcheck source=../helpers.sh
+. "$(dirname $0)/../helpers.sh"
+
+usage() {
+    echo "manage java container."
+    echo ""
+    echo "- help - this text"
+    echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
+    echo "- intellij [DIR] - start intellij, mount host DIR to container CWD"
+    echo "- build - build docker image from ubuntu 17.10"
+    exit 0
+}
+
+function tarball() {
+    check curl
+    local DLPAGE="https://www.jetbrains.com/idea/download/download-thanks.html?type=eap"
+    local RE="https://[^\"]+ideaIU-[0-9\\.]+tar.gz"
+    local r
+
+    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | sort -u)"
+    [ -z "$r" ] && err "no intellij tarball at $DLPAGE."
+    echo "found tarball: $r"
+    eval "$1='$r'";
+}
+
+function vsn() {
+    local r="0.0.0"
+    local IMAGE="$2"
+    local C=("dpkg-query" "-l" "openjdk-9-jdk")
+
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+~[0-9a-z]+-[0-9]+")"
+    r=$(echo "$r" | tr "~" "-")
+    eval "$1='$r'"
+}
+
+CMD="${1:-intellij}"
+VOL="${2:-/tmp/java}"
+case "$CMD" in
+    "help")
+        usage
+        ;;
+    "shell" | "bash")
+        go java "-it" "/bin/bash" "$VOL"
+        ;;
+    "intellij")
+        go java "-d" "idea.sh" "$VOL"
+        ;;
+    "build")
+        tarball TARBALL
+        build IMAGE "INTELLIJ_TARBALL=$TARBALL"
+        vsn VSN "$IMAGE"
+        tag "$IMAGE" "java:$VSN"
+        ;;
+    *)
+        err "unrecognized command: $CMD"
+esac
