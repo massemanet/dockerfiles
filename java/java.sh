@@ -17,7 +17,8 @@ usage() {
 
 function tarball() {
     check curl
-    local DLPAGE="https://www.jetbrains.com/idea/download/download-thanks.html?type=eap"
+    local DLPAGE="https://data.services.jetbrains.com"
+    DLPAGE+="/products/releases?code=IIU&latest=true&type=eap"
     local RE="https://[^\"]+ideaIU-[0-9\\.]+tar.gz"
     local r
 
@@ -30,9 +31,9 @@ function tarball() {
 function vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local C=("dpkg-query" "-l" "openjdk-9-jdk")
+    local C=("dpkg-query" "-l" "openjdk-9-jre-headless")
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+~[0-9a-z]+-[0-9]+")"
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9a-z]+\\.[0-9]+")"
     r=$(echo "$r" | tr "~" "-")
     eval "$1='$r'"
 }
