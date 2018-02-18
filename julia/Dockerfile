@@ -10,19 +10,19 @@ RUN apt-get update \
       curl \
       git \
       gosu \
+      imagemagick \
       libpython3-dev \
       libpython-dev \
       pandoc \
       python3-matplotlib \
       python3-qtconsole \
       python3-notebook \
+      sudo \
       texlive-xetex \
+      tmux \
       unzip \
  && apt-get clean \
  && mkdir -p /opt/wrk
-
-# the entrypoint will move these files after it has created a user.
-COPY includes/ /opt/includes/
 
 # install julia with basic data science support
 RUN mkdir -p /opt/julia \
@@ -40,6 +40,12 @@ RUN mkdir -p /opt/julia \
       Pkg.add("PyPlot")     ; Pkg.build("PyPlot")' \
  && ln -s /root/.julia/v* /opt/julia_local \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
+
+RUN /opt/julia/bin/julia -e \
+    'using CSV ; using IJulia ; using Plots ; using DataFrames'
+
+# the entrypoint will move these files after it has created a user.
+COPY includes/ /opt/includes/
 
 EXPOSE 8888
 
