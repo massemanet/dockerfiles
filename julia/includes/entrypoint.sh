@@ -15,6 +15,6 @@ if [ "$name" != "root" ]; then
     gosu "$name" /opt/includes/rearrange.sh
     exec gosu "$name" "$@"
 else
-    id
+    /opt/includes/rearrange.sh
     exec "$@"
 fi
