@@ -11,6 +11,7 @@ RUN apt-get update \
       git \
       gosu \
       imagemagick \
+      inkscape \
       libpython3-dev \
       libpython-dev \
       pandoc \
@@ -42,7 +43,7 @@ RUN mkdir -p /opt/julia \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
 
 RUN /opt/julia/bin/julia -e \
-    'using CSV ; using IJulia ; using Plots ; using DataFrames'
+    'using CSV ; using IJulia ; using Plots ; using PyPlot ; using DataFrames'
 
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
