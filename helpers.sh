@@ -30,7 +30,7 @@ function xconf() {
             fi
             ;;
         "Linux")
-            if [ -n "$DISPLAY" ]; then
+            if [ -n "${DISPLAY:+x}" ]; then
                 r="-e DISPLAY=unix$DISPLAY \
                    -v /tmp/.X11-unix:/tmp/.X11-unix"
             else
