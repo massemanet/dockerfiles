@@ -26,7 +26,9 @@ RUN apt-get update \
  && mkdir -p /opt/wrk
 
 # install julia with basic data science support
-RUN mkdir -p /opt/julia \
+RUN umask 000 \
+ && chmod +rwx /root /opt \
+ && mkdir -p /opt/julia \
  && curl -v -L ${JULIA_TARBALL} | \
       tar -C /opt/julia -x -z --strip-components=1 -f - \
  && /opt/julia/bin/julia -e \
@@ -44,9 +46,13 @@ RUN mkdir -p /opt/julia \
 
 RUN /opt/julia/bin/julia -e \
     'using CSV ; using IJulia ; using Plots ; using PyPlot ; using DataFrames'
+RUN /opt/julia/bin/julia -e \
+    'using GR'
 
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
+
+RUN /opt/includes/fix-perms.sh
 
 EXPOSE 8888
 

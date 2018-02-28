@@ -1,6 +1,9 @@
 #!/bin/bash
 
 echo "$(id) : $HOME"
+
+ln -s /root/.[c-k]* ~
+
 cd /opt/includes || exit 1
-cp output.jl /opt/julia_local/Plots/src
+sudo cp output.jl /opt/julia_local/Plots/src
 cp bashrc "$HOME/.bashrc"
