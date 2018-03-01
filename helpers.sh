@@ -89,6 +89,7 @@ function build() {
     r="$(docker build "${C[@]}" --rm "$(dirname "$0")" | tee >(cat - >&5))"
     exec 5<&-
     r=$(grep -Eo "Successfully built [a-f0-9]+" <<< "$r" | cut -f3 -d" ")
+    [ -z "$r" ] && err "build failed"
     eval "$1='$r'"
 }
 
