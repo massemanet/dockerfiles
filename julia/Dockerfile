@@ -38,17 +38,24 @@ RUN /opt/julia/bin/julia -e \
       Pkg.add("IJulia");\
       Pkg.add("DataFrames");\
       Pkg.add("RDatasets");\
-      Pkg.add("StatPlots");\
-      Pkg.add("Plots");\
-      Pkg.add("GR");\
-      ENV["PYTHON"]="python3";\
-      Pkg.add("PyPlot");\
       Pkg.build();\
-      using IJulia ; using Plots ; using PyPlot ; using CSV ; using DataFrames' \
- && /opt/julia/bin/julia -e \
-    'using GR' \
+      using IJulia ; using CSV ; using DataFrames' \
  && ln -s /root/.julia/v* /opt/julia_local \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
+
+# install Plots.jl
+RUN /opt/julia/bin/julia -e \
+     'Pkg.add("Plots"); \
+      Pkg.add("StatPlots"); \
+      Pkg.add("GR"); \
+      ENV["PYTHON"]="python3"; \
+      Pkg.add("PyPlot")' \
+ && /opt/julia/bin/julia -e \
+     'using Plots ; using StatPlots' \
+ && /opt/julia/bin/julia -e \
+     'using PyPlot' \
+ && /opt/julia/bin/julia -e \
+     'using GR'
 
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
