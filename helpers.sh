@@ -44,7 +44,7 @@ function xconf() {
 function find_image() {
     local r
     local TARGET="$2"
-    r=$(docker images | grep -E "^$TARGET\\s" |\
+    r=$(docker images | grep -E "^${TARGET}\\s" |\
         awk '{print $2,$3}' | sort -V | tail -1 | cut -f2 -d" ")
     [ -z "$r" ] && err "no $TARGET image, build first."
     eval "$1='$r'";
