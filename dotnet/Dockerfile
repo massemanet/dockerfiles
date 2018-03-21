@@ -29,6 +29,7 @@ RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && cd /root/.emacs.d && /root/.cask/bin/cask install \
  && cd /root && mv .emacs.d /opt/includes && chmod -R +r /opt/includes/.emacs.d
 
+# install dotnet
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | \
       gpg --dearmor > microsoft.gpg \
  && mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg \

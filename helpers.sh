@@ -76,7 +76,7 @@ function go() {
     flags FLAGS "$VOL"
     echo "found image $IMAGE"
     echo "mounting $VOL"
-    eval docker run "$FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"
+    eval docker run "-e DOCKER=$TARGET $FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"
 }
 
 function build() {
