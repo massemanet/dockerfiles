@@ -10,6 +10,7 @@ RUN apt-get update \
       gosu \
       make \
       python \
+      sudo \
  && apt-get clean \
  && mkdir -p /opt/wrk
 

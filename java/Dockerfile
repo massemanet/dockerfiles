@@ -8,6 +8,7 @@ RUN apt-get update \
       curl \
       git \
       gosu \
+      sudo \
  && apt-get clean \
  && mkdir -p /opt/wrk
 
