@@ -56,6 +56,9 @@ case "$CMD" in
         AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
         go julia "-d -p 8888:8888" "jupyter notebook $AS" "$VOL"
         ;;
+    "kill" | "die")
+        die julia
+        ;;
     "build")
         tarball TARBALL
         vsn VSN "$TARBALL"

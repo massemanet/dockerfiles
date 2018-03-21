@@ -69,6 +69,7 @@ function go() {
     local USERFLAGS="$2"
     local CMD="$3"
     local VOL="$4"
+
     mkdir -p "$VOL"
     check docker
     find_image IMAGE "$TARGET"
@@ -77,6 +78,23 @@ function go() {
     echo "found image $IMAGE"
     echo "mounting $VOL"
     eval docker run "-e DOCKER=$TARGET $FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"
+}
+
+function find_containers() {
+    join \
+        <(docker ps | sed 's/ID/IMAGE/g' | awk '{print $2,$1}' | sort -b) \
+        <(docker images | awk '{print $3,$1,$2}' | sort -b) | \
+        grep "$1" | \
+        awk '{print $2}'
+}
+
+function die() {
+    local TARGET="$1"
+
+    for C in $(find_containers "$TARGET"); do
+        echo -n "killing... "
+        docker kill "$C"
+    done
 }
 
 function build() {
