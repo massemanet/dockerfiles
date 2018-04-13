@@ -52,15 +52,18 @@ function find_image() {
 
 function flags() {
     local r
+    local AWS
     local VOL="$2"
     local DETACH="--detach-keys ctrl-q,ctrl-q"
     local WRKDIR="/opt/wrk"
+
     if uname -a | grep -q 'Microsoft'; then
         VOL="$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")"
-        r="$DETACH -v \"$VOL\":$WRKDIR"
-    else
-        r="--rm $DETACH -v \"$VOL\":$WRKDIR"
     fi
+    if [ -d ~/.aws ]; then
+        AWS=" -v ~/.aws:/tmp/.aws"
+    fi
+    r=" --rm $DETACH -v \"$VOL\":$WRKDIR $AWS"
     eval "$1='$r'";
 }
 

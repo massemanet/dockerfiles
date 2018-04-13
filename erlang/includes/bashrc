@@ -1,8 +1,13 @@
 #!/bin/bash
 
+export AWS_PROFILE=prod
+
 PROMPT_COMMAND='LAST_EXIT=$? ; [ $LAST_EXIT == 0 ] && unset LAST_EXIT'
-PS1='\[\e[33m\]${DOCKER}\[\e[32m\]${LAST_EXIT:+\[\e[31m\]($LAST_EXIT)}\[$\e[0m\] '
+export  PS1='\[\e[33m\]${DOCKER}'
+export PS1+='\[\e[36m\]${AWS_PROFILE:+[${AWS_PROFILE}]}'
+export PS1+='\[\e[32m\]${LAST_EXIT:+\[\e[31m\]($LAST_EXIT)}'
+export PS1+='\[$\e[0m\] '
 
 function dir() {
-  ls -AlF "$*"
+  ls -AlF "$@"
 }
