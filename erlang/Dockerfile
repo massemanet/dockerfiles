@@ -10,6 +10,7 @@ RUN apt-get update \
       git \
       gosu \
       make \
+      man \
       python \
       sudo \
  && apt-get clean \
