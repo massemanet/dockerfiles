@@ -60,8 +60,9 @@ function flags() {
     if uname -a | grep -q 'Microsoft'; then
         VOL="$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")"
     fi
-    if [ -d ~/.aws ]; then
-        AWS=" -v ~/.aws:/tmp/.aws"
+    if [ -d ~/.aws ]
+    then AWS=" -v ~/.aws:/tmp/.aws"
+    else AWS=""
     fi
     r=" --rm $DETACH -v \"$VOL\":$WRKDIR $AWS"
     eval "$1='$r'";
