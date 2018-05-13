@@ -11,6 +11,7 @@ RUN apt-get update \
       make \
       python \
       sudo \
+      tmux \
  && apt-get clean \
  && mkdir -p /opt/wrk
 
