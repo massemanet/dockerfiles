@@ -31,7 +31,7 @@ case "$CMD" in
         usage
         ;;
     "shell" | "bash")
-        go basemaanet "-it" "/bin/bash" "$VOL"
+        go basemanet "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
         go basemanet "-d" "emacs" "$VOL"
