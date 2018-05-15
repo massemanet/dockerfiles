@@ -23,19 +23,19 @@ function vsn() {
     eval "$1='$r'"
 }
 
-CMD="${1:-erlang}"
-VOL="${2:-/tmp/erlang}"
+CMD="${1:-bash}"
+VOL="${2:-/tmp/rust}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go erlang "-it" "/bin/bash" "$VOL"
+        go rust "-it" "/bin/bash" "$VOL"
         ;;
     "build")
         build IMAGE
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "erlang:$VSN"
+        tag "$IMAGE" "rust:$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

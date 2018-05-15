@@ -22,8 +22,12 @@ COPY includes/ /opt/includes/
 # the entrypoint script will create a user and move them to the right place.
 RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && mv /opt/includes/Cask /root/.emacs.d/ \
- && cd /root/.emacs.d && /root/.cask/bin/cask install \
- && cd /root && mv .emacs.d /opt/includes && chmod -R +r /opt/includes/.emacs.d
+ && cd /root/.emacs.d \
+ && /root/.cask/bin/cask install \
+ && mkdir fdlcap \
+ && cp /opt/includes/fdlcap.el fdlcap \
+ && cp /opt/includes/init.el . \
+ && chmod -R +rw .
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 

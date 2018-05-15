@@ -6,7 +6,7 @@ set -eu
 . "$(dirname $0)/../helpers.sh"
 
 usage() {
-    echo "manage emacs container."
+    echo "manage base container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
@@ -25,21 +25,21 @@ function vsn() {
 }
 
 CMD="${1:-emacs}"
-VOL="${2:-/tmp/emacs}"
+VOL="${2:-/tmp/base}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go emacs "-it" "/bin/bash" "$VOL"
+        go basemaanet "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
-        go emacs "-d" "emacs" "$VOL"
+        go basemanet "-d" "emacs" "$VOL"
         ;;
     "build")
         build IMAGE
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "emacs:$VSN"
+        tag "$IMAGE" "basemanet:$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"
