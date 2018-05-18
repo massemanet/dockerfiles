@@ -27,8 +27,8 @@ RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && cd /root/.emacs.d \
  && /root/.cask/bin/cask install \
  && mkdir fdlcap \
- && cp /opt/includes/fdlcap.el fdlcap \
- && cp /opt/includes/init.el . \
+ && mv /opt/includes/fdlcap.el fdlcap \
+ && mv /opt/includes/init.el . \
  && chmod -R +rw .
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin

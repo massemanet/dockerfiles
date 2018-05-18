@@ -1,47 +1,23 @@
-FROM debian:9
+ARG BASE_IMAGE
 
-ARG SDK_VSN
+FROM ${BASE_IMAGE}
 
 RUN apt-get update \
  && apt-get install -y \
       apt-transport-https \
-      bash-completion \
-      curl \
-      emacs \
-      gettext \
-      git \
-      gnupg \
-      gosu \
-      libunwind8 \
-      make \
-      python \
-      sudo \
+      wget \
  && apt-get clean \
  && mkdir -p /opt/wrk
 
-# the entrypoint will move these files after it has created a user.
-COPY includes/ /opt/includes/
-
-# use cask to compile emacs libs. then move it to /opt and change permissions.
-# the entrypoint script will create a user and move them to the right place.
-RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
- && mv /opt/includes/Cask /root/.emacs.d/ \
- && cd /root/.emacs.d && /root/.cask/bin/cask install \
- && cd /root && mv .emacs.d /opt/includes && chmod -R +r /opt/includes/.emacs.d
-
 # install dotnet
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | \
-      gpg --dearmor > microsoft.gpg \
- && mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg \
- && sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/dotnetdev.list' \
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
+      gpg --dearmor > microsoft.asc.gpg \
+ && mv microsoft.asc.gpg /etc/apt/trusted.gpg.d \
+ && wget -q https://packages.microsoft.com/config/ubuntu/$(grep RELEASE /etc/lsb-release | cut -f2 -d"=")/prod.list \
+ && mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
  && apt-get update \
- && apt-get install -y \
-      dotnet-sdk-${SDK_VSN}
-
-ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
-
-WORKDIR /opt/wrk
-
-ENTRYPOINT ["/opt/includes/entrypoint.sh"]
-
-CMD /bin/bash
+ && apt search dotnet-sdk | \
+      grep -Eo "dotnet-sdk-[0-9]\.[0-9]\.[0-9]/" | \
+      tail -1 | \
+      cut -f1 -d"/" | \
+      xargs apt-get install -y

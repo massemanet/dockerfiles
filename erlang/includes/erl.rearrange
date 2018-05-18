@@ -1,0 +1,2 @@
+move erlang "$HOME/.erlang"
+move user_default.erl "$HOME"

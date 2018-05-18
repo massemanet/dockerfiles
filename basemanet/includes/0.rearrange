@@ -1,0 +1,2 @@
+link /root/.emacs.d "$HOME"
+move bashrc "$HOME/.bashrc"

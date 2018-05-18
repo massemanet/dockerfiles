@@ -1,4 +1,6 @@
-FROM basemanet:25.2.2
+ARG BASE_IMAGE
+
+FROM ${BASE_IMAGE}
 
 # install rust (needs cc)
 RUN apt-get install -y build-essential \

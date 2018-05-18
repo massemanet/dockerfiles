@@ -15,6 +15,15 @@ usage() {
     exit 0
 }
 
+function vsn() {
+    local r="0.0.0"
+    local IMAGE="$2"
+    local C=("dotnet" "--version")
+
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -Eo "[0-9]\\.[0-9]\\.[0-9]")"
+    eval "$1='$r'"
+}
+
 CMD="${1:-bash}"
 VOL="${2:-/tmp/dotnet}"
 case "$CMD" in
@@ -28,9 +37,9 @@ case "$CMD" in
         go dotnet "-it" "fsi" "$VOL"
         ;;
     "build")
-        SDK_VSN="2.1.300-preview1-008174"
-        build IMAGE "SDK_VSN=$SDK_VSN"
-        tag "$IMAGE" "dotnet:$SDK_VSN"
+        build IMAGE
+        vsn VSN "$IMAGE"
+        tag "$IMAGE" "dotnet:$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

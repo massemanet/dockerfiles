@@ -1,6 +1,15 @@
-#!/bin/bash
+#!/bin/sh
 
-echo "$(id) : $HOME"
+move() {
+    [ -e "$1" ] && mv "$1" "$2"
+}
 
-[ -d "$HOME/.emacs.d" ] || ln -s /root/.emacs.d "$HOME"
-cp /opt/includes/bashrc "$HOME/.bashrc"
+link() {
+    [ -e "$1" ] && [ ! -e "$2" ] && ln -s "$1" "$2"
+}
+
+cd "$(dirname "$0")" || exit 1
+# shellcheck source=0.rearrange
+for f in *.rearrange; do
+    . "./$f"
+done
