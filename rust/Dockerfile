@@ -6,6 +6,7 @@ FROM ${BASE_IMAGE}
 RUN apt-get install -y build-essential \
  && curl -sSf https://sh.rustup.rs > /tmp/$$ \
  && chmod +x /tmp/$$ \
+ && chmod +rx /root \
  && /tmp/$$ -y
 
 ENV PATH /root/.cargo/bin:$PATH
