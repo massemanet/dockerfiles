@@ -12,6 +12,8 @@ RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
      erlang-common-test erlang-eunit erlang-dialyzer \
      erlang-mode erlang-parsetools erlang-dev \
  && curl https://s3.amazonaws.com/rebar3/rebar3 > /usr/bin/rebar3 \
- && chmod +x /usr/bin/rebar3
+ && chmod +x /usr/bin/rebar3 \
+ && cd $HOME/.emacs.d/.cask/*/elpa/edts-* \
+ && make
 
 COPY includes/ /opt/includes
