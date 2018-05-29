@@ -2,18 +2,18 @@
 
 set -eu
 
-function err() {
+err() {
     echo "$1"
     exit 1
 }
 
-function check() {
+check() {
     echo -n "checking $1..."
     type "$1" &>/dev/null || err "fail. please install $1"
     echo " ok"
 }
 
-function xconf() {
+xconf() {
     local r=""
     case "$(uname)" in
         "Darwin")
@@ -41,7 +41,7 @@ function xconf() {
     eval "$1='$r'";
 }
 
-function find_image() {
+find_image() {
     local r
     local TARGET="$2"
     r=$(docker images | grep -E "^${TARGET}\\s" |\
@@ -50,7 +50,7 @@ function find_image() {
     eval "$1='$r'";
 }
 
-function flags() {
+flags() {
     local r
     local AWS
     local VOL="$2"
@@ -68,7 +68,7 @@ function flags() {
     eval "$1='$r'";
 }
 
-function go() {
+go() {
     local TARGET="$1"
     local USERFLAGS="$2"
     local CMD="$3"
@@ -84,7 +84,7 @@ function go() {
     eval docker run "-e DOCKER=$TARGET $FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"
 }
 
-function find_containers() {
+find_containers() {
     join \
         <(docker ps | sed 's/ID/IMAGE/g' | awk '{print $2,$1}' | sort -b) \
         <(docker images | awk '{print $3,$1,$2}' | sort -b) | \
@@ -92,7 +92,7 @@ function find_containers() {
         awk '{print $2}'
 }
 
-function die() {
+die() {
     local TARGET="$1"
 
     for C in $(find_containers "$TARGET"); do
@@ -101,7 +101,19 @@ function die() {
     done
 }
 
-function build() {
+delete() {
+    local TARGET="$1"
+
+    TAG=$(docker images | grep "$TARGET" | awk '{print $2}')
+    if [ -z "$TAG" ]; then
+        echo "no such image: $TARGET"
+    else
+        die "$TARGET"
+        docker rmi -f "$TARGET:$VSN"
+    fi
+}
+
+build() {
     local r
     local ARG="${2:-""}"
     local C=() && [ -n "$ARG" ] && C=("--build-arg" "$ARG")
@@ -117,7 +129,7 @@ function build() {
     eval "$1='$r'"
 }
 
-function tag() {
+tag() {
     local IMAGE="$1"
     local TAG="$2"
     echo "tagging $TAG"

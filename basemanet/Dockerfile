@@ -5,6 +5,7 @@ RUN apt-get update \
       aspell \
       awscli \
       bash-completion \
+      build-essential \
       curl \
       emacs \
       git \

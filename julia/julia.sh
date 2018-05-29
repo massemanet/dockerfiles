@@ -59,6 +59,9 @@ case "$CMD" in
     "kill" | "die")
         die julia
         ;;
+    "delete")
+        delete julia
+        ;;
     "build")
         tarball TARBALL
         vsn VSN "$TARBALL"
