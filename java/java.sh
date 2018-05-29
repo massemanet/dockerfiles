@@ -33,8 +33,8 @@ function vsn() {
     local IMAGE="$2"
     local C=("dpkg-query" "-l" "openjdk-9-jre-headless")
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9a-z]+\\.[0-9]+")"
-    r=$(echo "$r" | tr "~" "-")
+    r="$(docker run "$IMAGE" "${C[@]}" | tr "~" "-" )"
+    r="$(echo "$r" | grep -oE "[0-9]+.[0-9a-z]+.[0-9]+")"
     eval "$1='$r'"
 }
 

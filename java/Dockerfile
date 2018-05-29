@@ -10,9 +10,6 @@ RUN apt-get update \
  && apt-get clean \
  && mkdir -p /opt/wrk
 
-# the entrypoint will move these files after it has created a user.
-COPY includes/ /opt/includes/
-
 # install intellij
 RUN mkdir /opt/intellij \
  && curl -v -L ${INTELLIJ_TARBALL} | \
