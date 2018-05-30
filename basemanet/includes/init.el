@@ -27,6 +27,7 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 (server-start)
 (nyan-mode 1)
+(global-flycheck-mode)
 
 (add-hook 'after-init-hook 'sml/setup)
 
@@ -66,41 +67,49 @@
  scroll-up-aggressively   0.1
  user-mail-address        "mats.cronqvist@gmail.com")
 
+(defun switch-to-previous-buffer ()
+  "Switch to previously open buffer.
+Repeated invocations toggle between the two most recently open buffers."
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
+(defun prev-window ()
+  (interactive)
+  (select-window (previous-window (selected-window) nil nil)))
+
 ;; keybindings
+(global-set-key (kbd "C-%")     `query-replace)
+(global-set-key (kbd "C-:")     'flycheck-previous-error)
+(global-set-key (kbd "C-<")     'beginning-of-buffer)
+(global-set-key (kbd "C->")     'end-of-buffer)
+(global-set-key (kbd "C-S-c")   `compile)
+(global-set-key (kbd "C-S-g")   `goto-line)
+(global-set-key (kbd "C-S-n")   `forward-list)
+(global-set-key (kbd "C-S-o")   `switch-to-previous-buffer)
+(global-set-key (kbd "C-S-p")   `backward-list)
+(global-set-key (kbd "C-S-q")   `fill-paragraph)
+(global-set-key (kbd "C-S-t")   `transpose-lines)
+(global-set-key (kbd "C-S-u")   `fdlcap-change-case-current-word)
+(global-set-key (kbd "C-S-v")   `scroll-down)
+(global-set-key (kbd "C-S-w")   `kill-ring-save)
+(global-set-key (kbd "C-\"")    'flycheck-next-error)
 (global-set-key (kbd "C-c a")   'align-regexp)
 (global-set-key (kbd "C-c b")   'bury-buffer)
 (global-set-key (kbd "C-c p")   'point-to-register)
 (global-set-key (kbd "C-c r")   'register-to-point)
-(global-set-key (kbd "C-\"")    'flycheck-next-error)
-(global-set-key (kbd "C-<")     'beginning-of-buffer)
-(global-set-key (kbd "C->")     'end-of-buffer)
-(global-set-key (kbd "C-:")     'flycheck-previous-error)
-(global-set-key (kbd "C-%")     `query-replace)
-(global-set-key (kbd "C-{")     `previous-error)
-(global-set-key (kbd "C-}")     `next-error)
-(global-set-key (kbd "C-S-u")   `fdlcap-change-case-current-word)
-(global-set-key (kbd "C-S-t")   `transpose-lines)
 (global-set-key (kbd "C-v")     `scroll-up)
-(global-set-key (kbd "C-S-v")   `scroll-down)
-(global-set-key (kbd "C-S-c")   `compile)
-(global-set-key (kbd "C-x c")   'execute-extended-command)
 (global-set-key (kbd "C-x C-r") 'revert-buffer)
+(global-set-key (kbd "C-x O")   'prev-window)
+(global-set-key (kbd "C-x c")   'execute-extended-command)
 (global-set-key (kbd "C-x |")   'set-80-columns)
 (global-set-key (kbd "C-z")     'undo) ; be like a mac
+(global-set-key (kbd "C-{")     `previous-error)
+(global-set-key (kbd "C-}")     `next-error)
 (global-set-key (kbd "M-z")     'undo) ; if screen eats C-z
 
-(global-flycheck-mode)
-
-;; go stuff
-(defun my-go-mode-hook ()
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  (setq whitespace-style (list 'face 'trailing 'lines-tail 'empty))
-  (if (not (string-match "go" compile-command))
-      (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet && go install"))
-  (local-set-key (kbd "M-.") 'godef-jump)
-  (local-set-key (kbd "M-*") 'pop-tag-mark))
-(add-hook 'go-mode-hook 'my-go-mode-hook)
+(let ((map minibuffer-local-map))
+  (define-key map (kbd "C-n")   'next-history-element)
+  (define-key map (kbd "C-p")   'previous-history-element))
 
 ;; erlang stuff
 
@@ -211,14 +220,6 @@
 (if (locate-library "whitespace")
     (my-whitespace-setup))
 
-(if (locate-library "git")
-    (require 'git))
-
-(if (locate-library "git-blame")
-    (progn
-      (require 'format-spec)
-      (require 'git-blame)))
-
 (if (locate-library "highlight-parentheses")
     (progn
       (require 'highlight-parentheses)
@@ -254,8 +255,6 @@
 
 ;; automatically added stuff
 
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -340,9 +339,12 @@
    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
  '(xterm-color-names-bright
    ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(font-lock-warning-face ((t (:inherit error :background "blue" :weight bold)))))
+ '(default ((t (:background "#002b36" :foreground "#839496" :weight bold :height 80 :width normal :family "DejaVu Sans Mono"))))
+ '(font-lock-warning-face ((t (:inherit error :background "blue" :weight bold))))
+ '(mode-line ((t (:background "#661111" :foreground "#839496" :inverse-video nil :box (:line-width 1 :color "#073642" :style unspecified) :overline "#073642" :underline "#284b54")))))
