@@ -132,6 +132,8 @@ build() {
 tag() {
     local IMAGE="$1"
     local TAG="$2"
+
+    [ -z "$TAG" ] && err "no tag info available"
     echo "tagging $TAG"
     docker tag "$IMAGE" "$TAG"
 }

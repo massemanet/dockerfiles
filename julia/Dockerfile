@@ -27,12 +27,13 @@ RUN mkdir -p /opt/julia \
 
 # install basic data science support for julia
 RUN /opt/julia/bin/julia -e \
-     'Pkg.add("CSV");\
-      Pkg.add("IJulia");\
+     'Pkg.add("IJulia");\
+      Pkg.add("CSV");\
       Pkg.add("DataFrames");\
       Pkg.add("RDatasets");\
+      Pkg.add("LsqFit");\
       Pkg.build();\
-      using IJulia ; using CSV ; using DataFrames' \
+      using IJulia ; using CSV ; using DataFrames ; using StatsBase ; using LsqFit' \
  && ln -s /root/.julia/v* /opt/julia_local \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
 

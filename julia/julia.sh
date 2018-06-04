@@ -17,23 +17,24 @@ usage() {
     exit 0
 }
 
-function tarball() {
-    check curl
+tarball() {
     local DLPAGE="https://julialang.org/downloads"
-    local RE="https://[^\"]+linux-x86_64.tar.gz"
+    local RE="https://[^\"]+/julia-[0-9\\.]+-linux-x86_64.tar.gz"
     local r
 
+    check curl
     r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | sort -u)"
     [ -z "$r" ] && err "no julia tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1='$r'";
 }
 
-function vsn() {
+vsn() {
     local r
-    r="$(echo "$2" | grep -o "[0-9]\\.[0-9]\\.[0-9]")"
-    [ -z "$r" ] && err "no version number in tarball name $2."
-    echo "julia version is $r"
+    local IMAGE="$2"
+    local C=("julia" "--version")
+
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
     eval "$1='$r'";
 }
 
@@ -64,8 +65,8 @@ case "$CMD" in
         ;;
     "build")
         tarball TARBALL
-        vsn VSN "$TARBALL"
         build IMAGE "JULIA_TARBALL=$TARBALL"
+        vsn VSN "$IMAGE"
         tag "$IMAGE" "julia:$VSN"
         ;;
     *)

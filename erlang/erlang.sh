@@ -33,6 +33,9 @@ case "$CMD" in
     "shell" | "bash")
         go erlang "-it" "/bin/bash" "$VOL"
         ;;
+    "emacs")
+        go erlang "-d" "emacs" "$VOL"
+        ;;
     "erl" | "erlang" | "repl")
         go erlang "-it" "erl" "$VOL"
         ;;
