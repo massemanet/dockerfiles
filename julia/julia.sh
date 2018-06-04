@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
 
 usage() {
     echo "manage julia container. latest julia + jupyter, CSV, and plotting."
@@ -23,16 +23,16 @@ tarball() {
     local r
 
     check curl
-    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | sort -u)"
+    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | sort -uV | tail -n1)"
     [ -z "$r" ] && err "no julia tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1='$r'";
 }
 
 vsn() {
-    local r
     local IMAGE="$2"
     local C=("julia" "--version")
+    local r
 
     r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
     eval "$1='$r'";
