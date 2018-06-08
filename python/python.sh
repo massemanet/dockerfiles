@@ -14,7 +14,7 @@ usage() {
     exit 0
 }
 
-function vsn() {
+vsn() {
     local r="0.0.0"
     local IMAGE="$2"
     local C=("dpkg-query" "-l" "python3")
@@ -39,8 +39,11 @@ case "$CMD" in
         go python "-d" "pycharm.sh" "$VOL"
         ;;
     "notebook" | "jupyter")
-        AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go python "-d -p 8888:8888" "jupyter notebook $AS" "$VOL"
+        AS="--no-browser --ip=0.0.0.0 --NotebookApp.token=''"
+        ID="$(go python "-d -p 8888" "jupyter-notebook $AS" "$VOL")"
+        NET="$(docker ps --no-trunc | grep "$ID")"
+        [ -z "$NET" ] && err "failed to start container"
+        echo "$NET" | grep -Eo "[0-9\\.:]+->" | cut -f2 -d":" | cut -f1 -d"-"
         ;;
     "build")
         build IMAGE

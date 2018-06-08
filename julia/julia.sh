@@ -55,7 +55,10 @@ case "$CMD" in
         ;;
     "notebook" | "jupyter")
         AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        go julia "-d -p 8888:8888" "jupyter notebook $AS" "$VOL"
+        ID="$(go julia "-d -p 8888" "jupyter notebook $AS" "$VOL")"
+        NET="$(docker ps --no-trunc | grep "$ID")"
+        [ -z "$NET" ] && err "failed to start container"
+        echo "$NET" | grep -Eo "[0-9\\.:]+->" | cut -f2 -d":" | cut -f1 -d"-"
         ;;
     "kill" | "die")
         die julia

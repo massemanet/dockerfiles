@@ -11,9 +11,10 @@ RUN apt-get update \
      atom \
      imagemagick \
      inkscape \
+     jupyter-nbconvert \
+     jupyter-notebook \
      pandoc \
      python3-matplotlib \
-     python3-notebook \
      python3-numpy \
      python3-pandas \
      python3-sklearn-lib \
