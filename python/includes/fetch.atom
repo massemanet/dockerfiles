@@ -1,0 +1,17 @@
+#!/bin/sh
+
+baseurl() {
+    echo "https://github.com/atom/atom/releases"
+}
+
+tag() {
+    curl -s "$(baseurl)"  | \
+        grep -Eo "releases/tag/v[0-9\\.]+\"" | \
+        tr -d "\"" | \
+        sort -V | \
+        tail -n1 | \
+        cut -f3 -d"/"
+}
+
+curl -sL "$(baseurl)/download/$(tag)/atom-amd64.deb" > /tmp/atom-amd64.deb
+dpkg -i /tmp/atom-amd64.deb || apt-get -y -f install

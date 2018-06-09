@@ -4,11 +4,9 @@ FROM ${BASE_IMAGE}
 
 RUN apt-get update \
  && apt-get install -y software-properties-common \
- && add-apt-repository ppa:webupd8team/atom \
  && add-apt-repository ppa:lyzardking/ubuntu-make \
  && apt-get update \
  && apt-get install -y \
-     atom \
      imagemagick \
      inkscape \
      jupyter-nbconvert \
@@ -24,3 +22,7 @@ RUN apt-get update \
 
 RUN ((echo "/opt/pycharm") | umake ide pycharm) \
  && ln -s /opt/pycharm/bin/pycharm.sh /usr/bin
+
+COPY includes/ /opt/includes/
+
+RUN /opt/includes/fetch.atom
