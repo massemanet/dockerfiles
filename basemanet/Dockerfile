@@ -1,4 +1,6 @@
-FROM ubuntu:17.10
+FROM ubuntu:18.04
+
+ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
  && apt-get install -y \
@@ -23,14 +25,15 @@ COPY includes/ /opt/includes/
 
 # use cask to compile emacs libs. then move it to /opt and change permissions.
 # the entrypoint script will create a user and move them to the right place.
-RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
+RUN chmod a+rwx /root \
+ && curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && mv /opt/includes/Cask /root/.emacs.d/ \
  && cd /root/.emacs.d \
  && /root/.cask/bin/cask install \
  && mkdir fdlcap \
  && mv /opt/includes/fdlcap.el fdlcap \
  && mv /opt/includes/init.el . \
- && chmod -R +rw .
+ && chmod -R a+rw .
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 

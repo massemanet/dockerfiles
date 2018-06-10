@@ -1,3 +1,3 @@
 link /tmp/.aws "$HOME/.aws"
-link /root/.emacs.d "$HOME"
-move bashrc "$HOME/.bashrc"
+link /root/.emacs.d "$HOME/.emacs.d"
+copy bashrc "$HOME/.bashrc"

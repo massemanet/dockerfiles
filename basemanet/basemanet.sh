@@ -18,9 +18,9 @@ usage() {
 function vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local C=("emacs" "--version")
+    local C=("cat" "/etc/lsb-release")
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
+    r="$(docker run "$IMAGE" "${C[@]}" | grep RELEASE | cut -f2 -d"=")"
     eval "$1='$r'"
 }
 
