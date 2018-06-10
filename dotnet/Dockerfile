@@ -1,6 +1,4 @@
-ARG BASE_IMAGE
-
-FROM ${BASE_IMAGE}
+FROM basemanet:18.04
 
 RUN apt-get update \
  && apt-get install -y \

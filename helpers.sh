@@ -117,12 +117,10 @@ build() {
     local r
     local ARG="${2:-""}"
     local C=() && [ -n "$ARG" ] && C=("--build-arg" "$ARG")
-    local B=("--build-arg" "BASE_IMAGE=basemanet:25.2.2")
-    local A=("${B[@]}" "${C[@]}")
 
     check docker
     exec 5>&1
-    r="$(docker build "${A[@]}" --rm "$(dirname "$0")" | tee >(cat - >&5))"
+    r="$(docker build "${C[@]}" --rm "$(dirname "$0")" | tee >(cat - >&5))"
     exec 5<&-
     r=$(grep -Eo "Successfully built [a-f0-9]+" <<< "$r" | cut -f3 -d" ")
     [ -z "$r" ] && err "build failed"

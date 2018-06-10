@@ -1,6 +1,4 @@
-ARG BASE_IMAGE
-
-FROM ${BASE_IMAGE}
+FROM basemanet:18.04
 
 # install erlang from erlang solutions
 # we only install a subset of the packages
