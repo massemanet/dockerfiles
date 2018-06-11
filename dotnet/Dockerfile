@@ -15,7 +15,8 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
  && mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
  && apt-get update \
  && apt search dotnet-sdk | \
-      grep -Eo "dotnet-sdk-[0-9]\.[0-9]\.[0-9]/" | \
-      tail -1 | \
+      grep -Eo "dotnet-sdk-[0-9]+\.[0-9]+\.[0-9]+/" | \
+      sort -V | \
+      tail -n1 | \
       cut -f1 -d"/" | \
       xargs apt-get install -y
