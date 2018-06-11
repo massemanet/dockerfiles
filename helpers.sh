@@ -53,6 +53,7 @@ find_image() {
 flags() {
     local r
     local AWS
+    local K8S
     local VOL="$2"
     local DETACH="--detach-keys ctrl-q,ctrl-q"
     local WRKDIR="/opt/wrk"
@@ -64,7 +65,11 @@ flags() {
     then AWS=" -v ~/.aws:/tmp/.aws"
     else AWS=""
     fi
-    r=" --rm $DETACH -v \"$VOL\":$WRKDIR $AWS"
+    if [ -d ~/.kube ]
+    then K8S=" -v ~/.kube:/tmp/.kube"
+    else K8S=""
+    fi
+    r=" --rm $DETACH -v \"$VOL\":$WRKDIR $AWS $K8S"
     eval "$1='$r'";
 }
 

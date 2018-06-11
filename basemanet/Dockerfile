@@ -4,6 +4,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update \
  && apt-get install -y \
+      apt-transport-https \
       aspell \
       awscli \
       bash-completion \
@@ -34,6 +35,12 @@ RUN chmod a+rwx /root \
  && mv /opt/includes/fdlcap.el fdlcap \
  && mv /opt/includes/init.el . \
  && chmod -R a+rw .
+
+RUN curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - \
+ && echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" \
+      >/etc/apt/sources.list.d/kubernetes.list \
+ && apt-get update \
+ && apt-get install -y kubectl
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
