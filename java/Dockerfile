@@ -4,7 +4,7 @@ ARG INTELLIJ_TARBALL
 
 RUN apt-get update \
  && apt-get install -y \
-      java9-sdk-headless \
+      default-jdk-headless \
  && apt-get clean \
  && mkdir -p /opt/wrk
 

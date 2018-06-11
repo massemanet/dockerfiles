@@ -31,7 +31,7 @@ function tarball() {
 function vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local C=("dpkg-query" "-l" "openjdk-9-jre-headless")
+    local C=("javac" "--version")
 
     r="$(docker run "$IMAGE" "${C[@]}" | tr "~" "-" )"
     r="$(echo "$r" | grep -oE "[0-9]+.[0-9a-z]+.[0-9]+")"
