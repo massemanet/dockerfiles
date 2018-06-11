@@ -5,6 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
  && apt-get install -y \
       apt-transport-https \
+      apt-utils \
       aspell \
       awscli \
       bash-completion \

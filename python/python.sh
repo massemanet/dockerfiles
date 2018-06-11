@@ -33,7 +33,7 @@ case "$CMD" in
         go python "-it" "/bin/bash" "$VOL"
         ;;
     "atom")
-        go python "-d" "atom" "$VOL"
+        go python "-d" "atom -fw" "$VOL"
         ;;
     "pycharm")
         go python "-d" "pycharm.sh" "$VOL"

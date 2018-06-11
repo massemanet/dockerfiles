@@ -1,2 +1,2 @@
-move erlang "$HOME/.erlang"
-move user_default.erl "$HOME"
+copy erlang "$HOME/.erlang"
+copy user_default.erl "$HOME/user_default.erl"
