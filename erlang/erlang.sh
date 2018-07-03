@@ -3,7 +3,7 @@
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
 
 usage() {
     echo "manage erlang container."
@@ -16,11 +16,11 @@ usage() {
 }
 
 function vsn() {
-    local r="0.0.0"
     local IMAGE="$2"
+    local r
     local C=("dpkg-query" "-l" "erlang-dev")
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+(\\.[0-9])*")"
     eval "$1='$r'"
 }
 
