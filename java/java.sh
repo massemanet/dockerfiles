@@ -15,7 +15,7 @@ usage() {
     exit 0
 }
 
-function tarball() {
+tarball() {
     check curl
     local DLPAGE="https://data.services.jetbrains.com"
     DLPAGE+="/products/releases?code=IIU&latest=true&type=eap"
@@ -28,7 +28,7 @@ function tarball() {
     eval "$1='$r'";
 }
 
-function vsn() {
+vsn() {
     local r="0.0.0"
     local IMAGE="$2"
     local C=("javac" "--version")

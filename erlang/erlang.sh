@@ -15,7 +15,7 @@ usage() {
     exit 0
 }
 
-function vsn() {
+vsn() {
     local IMAGE="$2"
     local r
     local C=("dpkg-query" "-l" "erlang-dev")

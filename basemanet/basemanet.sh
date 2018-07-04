@@ -15,7 +15,7 @@ usage() {
     exit 0
 }
 
-function vsn() {
+vsn() {
     local r="0.0.0"
     local IMAGE="$2"
     local C=("cat" "/etc/lsb-release")
