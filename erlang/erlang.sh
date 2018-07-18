@@ -34,7 +34,7 @@ case "$CMD" in
         go erlang "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
-        go erlang "-d" "emacs" "$VOL"
+        go erlang "-d" "emacs -mm" "$VOL"
         ;;
     "erl" | "erlang" | "repl")
         go erlang "-it" "erl" "$VOL"

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# shellcheck source=gitfunctions.sh
+. ~/gitfunctions.sh
+
 PROMPT_COMMAND='LAST_EXIT=$? ; [ $LAST_EXIT == 0 ] && unset LAST_EXIT'
 PS1='\[\e[33m\]${DOCKER}\[\e[32m\]${LAST_EXIT:+\[\e[31m\]($LAST_EXIT)}\[$\e[0m\] '
 
@@ -16,7 +19,7 @@ unset AWS_PROFILE
 if [ -f ~/.aws/config ] && grep -q "profile prod" ~/.aws/config ; then
     export AWS_PROFILE=prod
 fi
-if [ -f ~/.kube/config ] && test "$(which kubectl)" ; then
+if [ -f ~/.kube/config ] && test "$(command -v kubectl)" ; then
     export AWS_PROFILE
     PROMPT_COMMAND+=' ; AWS_PROFILE=$(grep -o "current-context.*" ~/.kube/config | cut -c18-)'
 fi
