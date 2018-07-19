@@ -3,7 +3,7 @@
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
 
 usage() {
     echo "manage base container."
@@ -34,7 +34,7 @@ case "$CMD" in
         go basemanet "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
-        go basemanet "-d" "emacs" "$VOL"
+        go basemanet "-d" "emacs -mm" "$VOL"
         ;;
     "build")
         build IMAGE
