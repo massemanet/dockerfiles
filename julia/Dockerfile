@@ -45,10 +45,12 @@ RUN /opt/julia/bin/julia -e \
      'Pkg.add("Plots"); \
       Pkg.add("StatPlots"); \
       Pkg.add("GR"); \
-      ENV["PYTHON"]="python3"; \
-      Pkg.add("PyPlot")' \
+      Pkg.add("PyPlot"); \
+      ENV["PYTHON"]=""; \
+      Pkg.build()' \
  && /opt/julia/bin/julia -e \
-     'using Plots ; using StatPlots' \
+     'using Plots; \
+      using StatPlots' \
  && /opt/julia/bin/julia -e \
      'using PyPlot' \
  && /opt/julia/bin/julia -e \
