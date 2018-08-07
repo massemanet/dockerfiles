@@ -17,12 +17,13 @@ usage() {
 
 tarball() {
     check curl
+    check jq
     local DLPAGE="https://data.services.jetbrains.com"
-    DLPAGE+="/products/releases?code=IIU&latest=true&type=eap"
-    local RE="https://[^\"]+ideaIU-[0-9\\.]+tar.gz"
+    DLPAGE+="/products/releases?code=IIC&latest=true&type=release"
+    local FILTER=".IIC[].downloads.linux.link"
     local r
 
-    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | sort -u)"
+    r="$(curl -sL "$DLPAGE" | jq -r "$FILTER")"
     [ -z "$r" ] && err "no intellij tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1='$r'";
