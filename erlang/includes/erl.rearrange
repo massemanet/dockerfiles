@@ -1,2 +1,3 @@
 copy erlang "$HOME/.erlang"
 copy user_default.erl "$HOME/user_default.erl"
+copy masserlang.el "$HOME/.emacs.d/masserlang/masserlang.el"

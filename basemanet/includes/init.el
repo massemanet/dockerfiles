@@ -9,11 +9,13 @@
 (require 'pallet)
 (pallet-mode t)
 
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
+(if (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)
+  (load-theme 'gruvbox-dark-hard))
 
 ;; add legacy
 (add-to-list 'load-path "~/.emacs.d/fdlcap")
+(add-to-list 'load-path "~/.emacs.d/masserlang")
 
 ;; turn on good shit
 (set-language-environment "ASCII")
@@ -111,83 +113,6 @@ Repeated invocations toggle between the two most recently open buffers."
   (define-key map (kbd "C-n")   'next-history-element)
   (define-key map (kbd "C-p")   'previous-history-element))
 
-;; erlang stuff
-
-;(add-hook 'after-init-hook #'global-flycheck-mode)
-(defun my-erlang-setup ()
-  (require 'edts-start)
-  (setq edts-xref-checks nil)
-  (require 'flycheck-rebar3)
-  (flycheck-rebar3-setup)
-  (flycheck-define-checker erlang
-    "awesome erlang checker"
-    :command ("erlc"
-              "-o" temporary-directory
-              (option-list "-I" flycheck-erlang-include-path)
-              (option-list "-pa" flycheck-erlang-library-path)
-              "-Wall"
-              source)
-    :error-patterns
-    ((warning line-start (file-name) ":" line ": Warning:" (message) line-end)
-     (error line-start (file-name) ":" line ": " (message) line-end))
-    :modes erlang-mode
-    :predicate (lambda ()
-                 (string-suffix-p ".erl" (buffer-file-name))))
-  (setq flycheck-erlang-include-path '("../include"))
-  (setq flycheck-erlang-library-path '("../_build/default/lib/*/ebin"))
-  (setq safe-local-variable-values
-        (quote ((allout-layout . t)
-                (erlang-indent-level . 4)
-                (erlang-indent-level . 2))))
-  (defun erl-file-header ()
-    "insert my very own erlang file header"
-    (interactive)
-    (insert "%% -*- mode: erlang; erlang-indent-level: 2 -*-\n")
-    (insert "%% @doc\n")
-    (insert "%% @end\n\n")
-    (insert (concat "-module(" (erlang-get-module-from-file-name) ").\n\n"))
-    (insert (concat "-export([]).\n\n")))
-
-  (add-hook 'erlang-new-file-hook 'my-erlang-new-file-hook)
-  (defun my-erlang-new-file-hook ()
-    (erl-file-header))
-
-    ;; stupid electricity
-    (set-variable 'erlang-electric-commands nil)
-    ;; make hack for compile command
-    ;; uses Makefile if it exists, else looks for ../inc & ../ebin
-    (unless (null buffer-file-name)
-      (make-local-variable 'compile-command)
-      (setq compile-command
-            (cond ((file-exists-p "Makefile")  "make -k")
-                  ((file-exists-p "../Makefile")  "make -kC..")
-                  (t (concat
-                      "erlc "
-                      (if (file-exists-p "../ebin") "-o ../ebin " "")
-                      (if (file-exists-p "../include") "-I ../include " "")
-                      "+debug_info -W " buffer-file-name))))))
-
-;; javascript stuff
-(defun my-js-setup()
-  (autoload 'js2-mode "js2" nil t)
-  (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-  (autoload 'json-mode "json" nil t)
-  (add-to-list 'auto-mode-alist '("\\.json$" . json-mode)))
-
-(add-hook 'json-mode-hook
-          (lambda ()
-            (setq js-indent-level 2)))
-
-(add-hook 'js2-mode-hook 'my-js2-mode-hook)
-
-(defun my-js2-mode-hook ()
-  (js2-leave-mirror-mode)
-  (setq js2-mirror-mode nil
-        js2-bounce-indent-p t
-        js2-cleanup-whitespace t
-        js2-mode-indent-ignore-first-tab t
-        js2-basic-offset 2))
-
 (defun my-whitespace-setup()
   (require 'whitespace)
   (setq whitespace-style (list 'face 'tabs 'trailing 'lines-tail 'empty)
@@ -200,22 +125,14 @@ Repeated invocations toggle between the two most recently open buffers."
       (require 'uniquify)
       (setq uniquify-buffer-name-style 'post-forward-angle-brackets)))
 
+(if (locate-library "masserlang")
+    (require 'masserlang))
+
 (if (locate-library "fdlcap")
     (require 'fdlcap))
 
 (if (locate-library "magit")
     (require 'magit))
-
-(if (locate-library "js2")
-    (my-js-setup))
-
-(if (locate-library "erlang-start")
-    (progn
-      (require 'erlang-start)
-      (my-erlang-setup)))
-
-(if (locate-library "alchemist")
-    (require 'alchemist))
 
 (if (locate-library "whitespace")
     (my-whitespace-setup))
@@ -272,7 +189,7 @@ Repeated invocations toggle between the two most recently open buffers."
  '(custom-enabled-themes (quote (solarized-dark)))
  '(custom-safe-themes
    (quote
-    ("82fce2cada016f736dbcef237780516063a17c2436d1ee7f42e395e38a15793b" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "b67cb8784f6a2d1a3f605e39d2c376937f3bf8460cb8a0d6fc625c0331c00c83" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
+    ("858a353233c58b69dbe3a06087fc08905df2d8755a0921ad4c407865f17ab52f" "c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" "82fce2cada016f736dbcef237780516063a17c2436d1ee7f42e395e38a15793b" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "b67cb8784f6a2d1a3f605e39d2c376937f3bf8460cb8a0d6fc625c0331c00c83" "4cf3221feff536e2b3385209e9b9dc4c2e0818a69a1cdb4b522756bcdf4e00a4" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" default)))
  '(fci-rule-color "#073642")
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
  '(highlight-symbol-colors
@@ -339,12 +256,3 @@ Repeated invocations toggle between the two most recently open buffers."
    ["#073642" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#eee8d5"])
  '(xterm-color-names-bright
    ["#002b36" "#cb4b16" "#586e75" "#657b83" "#839496" "#6c71c4" "#93a1a1" "#fdf6e3"]))
-
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background "#002b36" :foreground "#839496" :weight bold :height 80 :width normal :family "DejaVu Sans Mono"))))
- '(font-lock-warning-face ((t (:inherit error :background "blue" :weight bold))))
- '(mode-line ((t (:background "#661111" :foreground "#839496" :inverse-video nil :box (:line-width 1 :color "#073642" :style unspecified) :overline "#073642" :underline "#284b54")))))

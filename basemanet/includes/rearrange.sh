@@ -1,10 +1,12 @@
 #!/bin/sh
 
 copy() {
+    [ ! -e "$(dirname "$2")" ] && mkdir -p "$(dirname "$2")"
     [ -e "$1" ] && cp "$1" "$2"
 }
 
 link() {
+    [ ! -e "$(dirname "$2")" ] && mkdir -p "$(dirname "$2")"
     [ -e "$1" ] && [ ! -e "$2" ] && ln -s "$1" "$2"
 }
 
