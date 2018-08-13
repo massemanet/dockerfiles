@@ -2,7 +2,6 @@ FROM basemanet:18.04
 
 RUN apt-get update \
  && apt-get install -y \
-      apt-transport-https \
       wget \
  && apt-get clean \
  && mkdir -p /opt/wrk
