@@ -28,13 +28,11 @@ RUN /opt/julia/bin/julia -e \
      'using Pkg;\
       Pkg.add("CSV");\
       Pkg.add("DataFrames");\
-      Pkg.add("GLM");\
       Pkg.add("IJulia");\
-      Pkg.add("LsqFit");\
       Pkg.add("RDatasets");\
       Pkg.build();\
-      using CSV ; using DataFrames ; using GLM ;\
-      using IJulia ; using LsqFit ; using StatsBase' \
+      using CSV ; using DataFrames ;\
+      using IJulia ; using RDatasets' \
  && ln -s /root/.julia/v* /opt/julia_local \
  && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
 
@@ -44,16 +42,6 @@ ENV JULIA_LOAD_PATH /opt/julia_local
 # install Plots.jl
 RUN /opt/julia/bin/julia -e \
      'using Pkg;\
-      Pkg.add("Plots"); \
-      Pkg.add("StatPlots"); \
-      Pkg.add("GR"); \
       Pkg.add("PyPlot"); \
-      ENV["PYTHON"]=""; \
-      Pkg.build()' \
- && /opt/julia/bin/julia -e \
-     'using Plots; \
-      using StatPlots' \
- && /opt/julia/bin/julia -e \
-     'using PyPlot' \
- && /opt/julia/bin/julia -e \
-     'using GR'
+      Pkg.build(); \
+      using PyPlot'
