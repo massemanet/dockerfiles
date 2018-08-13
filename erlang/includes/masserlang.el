@@ -2,10 +2,15 @@
 ;;; Commentary:
 ;;; masse's erlang setup
 
+(add-to-list 'load-path "/root/distel/elisp")
+
 (require 'erlang-start)
 (require 'flycheck-rebar3)
+(require 'distel)
 
 ;;; Code:
+
+(distel-setup)
 
 (set-variable 'erlang-electric-commands nil)
 (setq safe-local-variable-values

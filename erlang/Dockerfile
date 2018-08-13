@@ -11,10 +11,16 @@ RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
      erlang-common-test erlang-eunit erlang-dialyzer \
      erlang-mode erlang-parsetools erlang-dev \
  && curl https://s3.amazonaws.com/rebar3/rebar3 > /usr/bin/rebar3 \
- && chmod +x /usr/bin/rebar3 \
- && cd $HOME/.emacs.d/.cask/*/elpa/edts-*/lib/edts \
- && make deps \
- && sed -i 's/warnings_as_errors,//g' ../meck/rebar.config \
- && make -C ../..
+ && chmod +x /usr/bin/rebar3
+
+RUN cd ~ \
+ && git clone http://github.com/massemanet/distel.git \
+ && make -C distel
+
+RUN cd ~ \
+ && git clone http://github.com/massemanet/redbug.git \
+ && cd redbug \
+ && git checkout v2.0 \
+ && make
 
 COPY includes/ /opt/includes
