@@ -23,7 +23,7 @@ tarball() {
     local r
 
     check curl
-    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | sort -uV | tail -n1)"
+    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "0.7" | sort -uV | tail -n1)"
     [ -z "$r" ] && err "no julia tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1='$r'";
@@ -51,7 +51,7 @@ case "$CMD" in
         go julia "-it" "julia" "$VOL"
         ;;
     "qt" | "qtconsole")
-        go julia "-d" "jupyter-qtconsole --kernel julia-0.6" "$VOL"
+        go julia "-d" "jupyter-qtconsole --kernel julia" "$VOL"
         ;;
     "notebook" | "jupyter")
         AS="--allow-root --no-browser --ip=0.0.0.0 --NotebookApp.token=''"

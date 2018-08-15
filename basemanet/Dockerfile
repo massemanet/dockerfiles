@@ -17,10 +17,15 @@ RUN apt-get update \
       make \
       man \
       python \
+      software-properties-common \
       sudo \
       tmux \
  && apt-get clean \
  && mkdir -p /opt/wrk
+
+RUN add-apt-repository -y ppa:ubuntu-elisp/ppa \
+ && apt-get update \
+ && apt-get install -y emacs-snapshot
 
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
@@ -32,6 +37,7 @@ RUN chmod a+rwx /root \
  && mv /opt/includes/Cask /root/.emacs.d/ \
  && cd /root/.emacs.d \
  && /root/.cask/bin/cask install \
+ && CASK_EMACS=$(command -v emacs-snapshot) /root/.cask/bin/cask install \
  && mkdir fdlcap \
  && mv /opt/includes/fdlcap.el fdlcap \
  && mv /opt/includes/init.el . \

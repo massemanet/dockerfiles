@@ -25,23 +25,28 @@ RUN mkdir -p /opt/julia \
 
 # install basic data science support for julia
 RUN /opt/julia/bin/julia -e \
-     'using Pkg;\
-      Pkg.add("CSV");\
-      Pkg.add("DataFrames");\
-      Pkg.add("IJulia");\
-      Pkg.add("RDatasets");\
-      Pkg.build();\
-      using CSV ; using DataFrames ;\
-      using IJulia ; using RDatasets' \
- && ln -s /root/.julia/v* /opt/julia_local \
- && ln -s /opt/julia_local/Conda/deps/usr /opt/conda
+     'using Pkg; \
+      Pkg.add("PyCall"); \
+      Pkg.add("CSV"); \
+      Pkg.add("DataFrames"); \
+      Pkg.add("IJulia"); \
+      Pkg.add("LsqFit"); \
+      Pkg.add("PyPlot"); \
+      Pkg.add("LaTeXStrings"); \
+      Pkg.add("Plots"); \
+      Pkg.add("StatPlots"); \
+      ENV["PYTHON"]=""; Pkg.build(); \
+      using CSV; \
+      using DataFrames; \
+      using IJulia; \
+      using LsqFit' \
+
+RUN ln -s /root/.julia/packages/Conda/*/deps/usr /opt/conda
 
 ENV PATH /opt/julia/bin:/opt/conda/bin:$PATH
-ENV JULIA_LOAD_PATH /opt/julia_local
 
 # install Plots.jl
 RUN /opt/julia/bin/julia -e \
-     'using Pkg;\
-      Pkg.add("PyPlot"); \
-      Pkg.build(); \
-      using PyPlot'
+     'using Plots; \
+      using StatPlots; \
+      pyplot()'
