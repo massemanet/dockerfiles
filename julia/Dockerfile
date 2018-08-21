@@ -35,18 +35,19 @@ RUN /opt/julia/bin/julia -e \
       Pkg.add("LaTeXStrings"); \
       Pkg.add("Plots"); \
       Pkg.add("StatPlots"); \
-      ENV["PYTHON"]=""; Pkg.build(); \
+      ENV["PYTHON"]=""; \
+      Pkg.build(); \
       using CSV; \
       using DataFrames; \
       using IJulia; \
-      using LsqFit' \
+      using LsqFit'
+
+RUN /opt/julia/bin/julia -e \
+      'using Plots; \
+       using StatPlots; \
+       ENV["DISPLAY"]="dummy"; \
+       pyplot()'
 
 RUN ln -s /root/.julia/packages/Conda/*/deps/usr /opt/conda
 
 ENV PATH /opt/julia/bin:/opt/conda/bin:$PATH
-
-# install Plots.jl
-RUN /opt/julia/bin/julia -e \
-     'using Plots; \
-      using StatPlots; \
-      pyplot()'
