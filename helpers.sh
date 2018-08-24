@@ -52,24 +52,23 @@ find_image() {
 
 flags() {
     local r
-    local AWS
-    local K8S
+    local MOUNTS
     local VOL="$2"
     local DETACH="--detach-keys ctrl-q,ctrl-q"
     local WRKDIR="/opt/wrk"
 
-    if uname -a | grep -q 'Microsoft'; then
-        VOL="$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")"
+    if uname -a | grep -q 'Microsoft'
+    then MOUNTS="-v \"$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")\":$WRKDIR"
+    else MOUNTS="-v $VOL:$WRKDIR"
     fi
-    if [ -d ~/.aws ]
-    then AWS=" -v ~/.aws:/tmp/.aws"
-    else AWS=""
-    fi
-    if [ -d ~/.kube ]
-    then K8S=" -v ~/.kube:/tmp/.kube"
-    else K8S=""
-    fi
-    r=" --rm $DETACH -v \"$VOL\":$WRKDIR $AWS $K8S"
+
+    [ -d ~/.ssh ] && MOUNTS+=" -v ~/.ssh:/tmp/.ssh"
+
+    [ -d ~/.aws ] && MOUNTS+=" -v ~/.aws:/tmp/.aws"
+
+    [ -d ~/.kube ] && MOUNTS+=" -v ~/.kube:/tmp/.kube"
+
+    r=" --rm $DETACH $MOUNTS"
     eval "$1='$r'";
 }
 
