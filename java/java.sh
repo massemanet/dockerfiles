@@ -3,7 +3,7 @@
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
 
 usage() {
     echo "manage java container."
