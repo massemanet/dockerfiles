@@ -14,17 +14,23 @@ RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
  && chmod +x /usr/bin/rebar3
 
 RUN cd ~ \
- && git clone https://github.com/massemanet/distel.git \
- && make -C distel
+ && git clone https://github.com/massemanet/distel \
+ && cd distel \
+ && git checkout 2018 \
+ && make
 
 RUN cd ~ \
- && git clone https://github.com/massemanet/redbug.git \
+ && git clone https://github.com/massemanet/trane \
+ && make -C trane
+
+RUN cd ~ \
+ && git clone https://github.com/massemanet/redbug \
  && cd redbug \
  && git checkout v2.0 \
  && make
 
 RUN cd ~ \
- && git clone https://github.com/erlang/sourcer.git \
+ && git clone https://github.com/erlang/sourcer \
  && cd sourcer \
  && rebar3 compile
 

@@ -1,16 +1,19 @@
 ;;; masserlang --- Summary
 ;;; Commentary:
 ;;; masse's erlang setup
+;;; Code:
 
 (add-to-list 'load-path "/root/distel/elisp")
 
 (require 'erlang-start)
 (require 'flycheck-rebar3)
-(require 'distel)
-
-;;; Code:
+(require 'company)
+(require 'company-distel)
 
 (distel-setup)
+(add-to-list 'company-backends 'company-distel)
+
+(company-mode t)
 
 (set-variable 'erlang-electric-commands nil)
 (setq safe-local-variable-values
