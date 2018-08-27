@@ -18,7 +18,7 @@ usage() {
 tarball() {
     local VSN="$2"
     local DLPAGE="https://golang.org/dl"
-    local RE="go[0-9]+\\.[0-9]+\\.[0-9]+\\.linux-amd64.tar.gz"
+    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)*)*\\.linux-amd64.tar.gz"
     local r
 
     check curl

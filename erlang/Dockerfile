@@ -29,9 +29,4 @@ RUN cd ~ \
  && git checkout v2.0 \
  && make
 
-RUN cd ~ \
- && git clone https://github.com/erlang/sourcer \
- && cd sourcer \
- && rebar3 compile
-
 COPY includes/ /opt/includes

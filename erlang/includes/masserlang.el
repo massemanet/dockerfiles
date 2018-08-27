@@ -38,6 +38,12 @@
 (setq flycheck-erlang-include-path '("../include"))
 (setq flycheck-erlang-library-path '("../_build/default/lib/*/ebin"))
 
+(defun my-erlang-mode-hook ()
+  "We want company mode."
+  (company-mode t))
+
+(add-hook 'erlang-mode-hook 'my-erlang-mode-hook)
+
 (defun my-erlang-new-file-hook ()
   "Insert my very own erlang file header."
   (interactive)
