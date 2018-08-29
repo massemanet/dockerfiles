@@ -36,6 +36,9 @@ case "$CMD" in
     "fsharp" | "fsi" | "repl")
         go dotnet "-it" "fsi" "$VOL"
         ;;
+    "kill" | "die")
+        die dotnet
+        ;;
     "build")
         build IMAGE
         vsn VSN "$IMAGE"

@@ -39,6 +39,9 @@ case "$CMD" in
     "erl" | "erlang" | "repl")
         go erlang "-it" "erl" "$VOL"
         ;;
+    "kill" | "die")
+        die erlang
+        ;;
     "build")
         build IMAGE
         vsn VSN "$IMAGE"

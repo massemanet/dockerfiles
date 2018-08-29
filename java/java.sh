@@ -51,6 +51,9 @@ case "$CMD" in
     "intellij")
         go java "-d" "idea.sh" "$VOL"
         ;;
+    "kill" | "die")
+        die java
+        ;;
     "build")
         tarball TARBALL
         build IMAGE "INTELLIJ_TARBALL=$TARBALL"

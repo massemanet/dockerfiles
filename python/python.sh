@@ -45,6 +45,9 @@ case "$CMD" in
         [ -z "$NET" ] && err "failed to start container"
         echo "$NET" | grep -Eo "[0-9\\.:]+->" | cut -f2 -d":" | cut -f1 -d"-"
         ;;
+    "kill" | "die")
+        die python
+        ;;
     "build")
         build IMAGE
         vsn VSN "$IMAGE"

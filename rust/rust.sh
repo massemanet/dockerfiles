@@ -32,6 +32,9 @@ case "$CMD" in
     "shell" | "bash")
         go rust "-it" "/bin/bash" "$VOL"
         ;;
+    "kill" | "die")
+        die rust
+        ;;
     "build")
         build IMAGE
         vsn VSN "$IMAGE"
