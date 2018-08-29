@@ -18,7 +18,7 @@ usage() {
 tarball() {
     local VSN="$2"
     local DLPAGE="https://golang.org/dl"
-    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)*)*\\.linux-amd64.tar.gz"
+    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux-amd64.tar.gz"
     local r
 
     check curl
@@ -33,7 +33,7 @@ vsn() {
     local C=("go" "version")
     local r
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+\\.[0-9]+")"
+    r="$(docker run "$IMAGE" "${C[@]}" | grep -oE "[0-9]+\\.[0-9]+(\\.[0-9]+)?")"
     eval "$1='$r'";
 }
 
