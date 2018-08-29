@@ -5,15 +5,15 @@
 
 (add-to-list 'load-path "/root/distel/elisp")
 
+(require 'align)
 (require 'erlang-start)
 (require 'flycheck-rebar3)
 (require 'company)
 (require 'company-distel)
 
 (distel-setup)
-(add-to-list 'company-backends 'company-distel)
-
-(company-mode t)
+(add-to-list 'company-backends 'company-distel-modules)
+(setq company-require-match nil)
 
 (set-variable 'erlang-electric-commands nil)
 (setq safe-local-variable-values
