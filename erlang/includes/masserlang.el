@@ -4,6 +4,7 @@
 ;;; Code:
 
 (add-to-list 'load-path "/root/distel/elisp")
+(add-to-list 'load-path "/root/distel-completion")
 
 (require 'align)
 (require 'erlang-start)
@@ -14,6 +15,7 @@
 (distel-setup)
 (add-to-list 'company-backends 'company-distel-modules)
 (setq company-require-match nil)
+(setq company-lighter nil)
 
 (set-variable 'erlang-electric-commands nil)
 (setq safe-local-variable-values

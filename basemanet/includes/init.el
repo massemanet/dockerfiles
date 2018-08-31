@@ -12,7 +12,7 @@
 (if (memq window-system '(mac ns x))
     (progn
       (exec-path-from-shell-initialize)
-      (load-theme 'gruvbox-dark-hard)))
+      (load-theme 'gruvbox-dark-hard t)))
 
 ;; add legacy
 (add-to-list 'load-path "~/.emacs.d/fdlcap")

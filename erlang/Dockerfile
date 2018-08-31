@@ -20,6 +20,9 @@ RUN cd ~ \
  && make
 
 RUN cd ~ \
+ && git clone https://github.com/massemanet/distel-completion
+
+RUN cd ~ \
  && git clone https://github.com/massemanet/trane \
  && make -C trane
 
