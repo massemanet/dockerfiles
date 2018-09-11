@@ -31,12 +31,12 @@ function gitcheck() {
 # show status of all repos under "$1" (deafults to "~/git")
 function gitstat () {
     local base stat branch uptodate
-    if [ -z "$1" ]; then
-        base=~/git;
-    else
-        base=$1;
+    if [ -z "$1" ]
+    then base=~/git;
+    else base=$1;
     fi;
     for d in "$base"/* ; do
+        ! [ -d "$d"/.git ] && continue
         echo -n "$(basename "$d")"
         echo -n " "
         ( cd "$d" || exit 2
@@ -45,21 +45,23 @@ function gitstat () {
           [ -z "$branch" ] && \
               branch=$(echo "$stat" | \
                            grep -Eo "HEAD detached|Not currently on any" && \
-                           echo "!")
+                           echo "(detached)")
           [ -z "$branch" ] && \
               branch="()"
-          uptodate="$(echo "$stat" | grep -q "is behind" && echo "!")"
+          uptodate="$(echo "$stat" | grep -q "is behind" && echo "behind")"
           [ -z "$uptodate" ] && \
-              uptodate=$(echo "$stat" | grep -q "is ahead" && echo "*")
+              uptodate=$(echo "$stat" | grep -q "is ahead" && echo "ahead")
           [ -z "$uptodate" ] && \
-              uptodate=$(echo "$stat" | grep -q "diverged" && echo "<")
+              uptodate=$(echo "$stat" | grep -q "diverged" && echo "diverged")
           [ -z "$uptodate" ] && \
-              uptodate=$(echo "$stat" | grep -Eq "Change|Untrac" && echo "#")
+              uptodate=$(echo "$stat" | grep -Eq "Change|Untrac" && echo "tainted")
+          tag=$(2>/dev/null git describe --tags HEAD)
+          [ -z "$tag" ] && tag="[]"
           echo -n "$branch"
           echo -n "  "
           echo -n "(""$uptodate"")"
           echo -n "  "
-          2>/dev/null git describe --tags HEAD )
+          echo "$tag" )
     done | column -t
 }
 
@@ -70,7 +72,14 @@ gitupd() {
     base=${1:-~/git}
     for d in "$base"/*
     do
-        echo -n "$(basename "$d")"": "
-        (cd "$d" && git fetch --prune 1> /dev/null && git pull)
+        if [ -d "$d"/.git ]; then
+            printf "\\e[33m"; printf "%s: " "$(basename "$d")"; printf "\\e[0m"
+            r="$(cd "$d" && 2>&1 git fetch --prune && 2>&1 git pull -r)"
+            s=$(grep -Eo "Current branch [^ ]+" <<< "$r" | cut -c 16-)
+            if [ -z "$s" ]
+            then printf "\\e[31m" ; printf "\\n%s\\n" "$r" ; printf "\\e[0m"
+            else printf "%s\\n" "$s"
+            fi
+        fi
     done
 }

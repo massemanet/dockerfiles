@@ -49,6 +49,16 @@
  ring-bell-function          #'blink-mode-line
  visible-bell                nil)
 
+(defun my-dark ()
+  "Set dark theme."
+  (interactive)
+  (load-theme 'gruvbox-dark-hard t))
+
+(defun my-lite ()
+  "Set light theme."
+  (interactive)
+  (load-theme 'gruvbox-light-hard t))
+
 (defun set-80-columns ()
   "Set the selected window to 80 columns."
   (interactive)
@@ -123,6 +133,11 @@ Repeated invocations toggle between the two most recently open buffers."
     (progn
       (require 'uniquify)
       (setq uniquify-buffer-name-style 'post-forward-angle-brackets)))
+
+(if (locate-library "projectile")
+    (progn
+      (projectile-mode +1)
+      (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)))
 
 (if (locate-library "masserlang")
     (require 'masserlang))

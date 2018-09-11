@@ -12,6 +12,14 @@
 (require 'company)
 (require 'company-distel)
 
+(defun my-shell-mode ()
+  "My erlang shell mode bindings."
+  (setq comint-history-isearch 'dwim
+        comint-input-ignoredups t)
+  (local-set-key (kbd "C-n") 'comint-next-input)
+  (local-set-key (kbd "C-p") 'comint-previous-input))
+(add-hook 'erlang-shell-mode-hook 'my-shell-mode)
+
 (distel-setup)
 (add-to-list 'company-backends 'company-distel-modules)
 (setq company-require-match nil)
