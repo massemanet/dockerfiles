@@ -1,5 +1,5 @@
-(source "gnu" "http://elpa.gnu.org/packages/")
-(source "melpa" "http://melpa.milkbox.net/packages/")
+(source gnu)
+(source melpa)
 
 (depends-on "async")
 (depends-on "cargo")

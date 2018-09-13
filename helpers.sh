@@ -62,11 +62,13 @@ flags() {
     else MOUNTS="-v $VOL:$WRKDIR"
     fi
 
-    [ -d ~/.ssh ] && MOUNTS+=" -v ~/.ssh:/tmp/.ssh"
+    [ -e ~/.ssh ] && MOUNTS+=" -v ~/.ssh:/tmp/.ssh:ro"
 
-    [ -d ~/.aws ] && MOUNTS+=" -v ~/.aws:/tmp/.aws"
+    [ -e ~/.aws ] && MOUNTS+=" -v ~/.aws:/tmp/.aws:ro"
 
-    [ -d ~/.kube ] && MOUNTS+=" -v ~/.kube:/tmp/.kube"
+    [ -e ~/.kube ] && MOUNTS+=" -v ~/.kube:/tmp/.kube:ro"
+
+    [ -e ~/.gitconfig ] && MOUNTS+=" -v ~/.gitconfig:/tmp/gitconfig:ro"
 
     r=" --rm $DETACH $MOUNTS"
     eval "$1='$r'";
