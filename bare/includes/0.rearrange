@@ -1,0 +1,5 @@
+copy bashrc "$HOME/.bashrc"
+copy gitconfig "$HOME/.gitconfig"
+copy gitfunctions.sh "$HOME/gitfunctions.sh"
+copy /tmp/gitconfig "$HOME/.gitconfig"
+link /tmp/.ssh "$HOME/.ssh"
