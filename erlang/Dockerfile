@@ -13,6 +13,8 @@ RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
  && curl https://s3.amazonaws.com/rebar3/rebar3 > /usr/bin/rebar3 \
  && chmod +x /usr/bin/rebar3
 
+COPY includes/ /opt/includes
+
 RUN cd ~ \
  && git clone https://github.com/massemanet/distel \
  && cd distel \
@@ -31,5 +33,3 @@ RUN cd ~ \
  && cd redbug \
  && git checkout v2.0 \
  && make
-
-COPY includes/ /opt/includes

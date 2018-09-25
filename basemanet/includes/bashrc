@@ -8,6 +8,9 @@ shopt -s checkwinsize
 # shellcheck source=gitfunctions.sh
 . ~/gitfunctions.sh
 
+# emacs
+export EDITOR="emacsclient -ct -a ''"
+
 PROMPT_COMMAND='LAST_EXIT=$? ; [ $LAST_EXIT == 0 ] && unset LAST_EXIT'
 
 export GIT_PS1_SHOWSTASHSTATE=true
