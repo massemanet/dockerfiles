@@ -10,6 +10,7 @@ shopt -s checkwinsize
 
 # emacs
 export EDITOR="emacsclient -ct -a ''"
+export ESHELL=/bin/bash
 
 PROMPT_COMMAND='LAST_EXIT=$? ; [ $LAST_EXIT == 0 ] && unset LAST_EXIT'
 
