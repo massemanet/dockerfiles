@@ -1,10 +1,9 @@
 FROM basemanet:18.04
 
-RUN apt-get update \
- && apt-get install -y software-properties-common \
- && add-apt-repository ppa:lyzardking/ubuntu-make \
- && apt-get update \
- && apt-get install -y \
+RUN sudo apt-get update \
+ && sudo add-apt-repository ppa:lyzardking/ubuntu-make \
+ && sudo apt-get update \
+ && sudo apt-get install -y \
      imagemagick \
      inkscape \
      jupyter-nbconvert \
@@ -16,7 +15,7 @@ RUN apt-get update \
      python3-sklearn-lib \
      texlive-xetex \
      ubuntu-make \
- && apt-get clean
+ && sudo apt-get clean
 
 RUN ((echo "/opt/pycharm") | umake ide pycharm) \
  && ln -s /opt/pycharm/bin/pycharm.sh /usr/bin

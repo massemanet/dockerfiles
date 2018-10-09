@@ -62,6 +62,8 @@ flags() {
     else MOUNTS="-v $VOL:$WRKDIR"
     fi
 
+    [ -e ~/.vscode ] && MOUNTS+=" -v ~/.vscode:/tmp/.vscode"
+
     [ -e ~/.ssh ] && MOUNTS+=" -v ~/.ssh:/tmp/.ssh:ro"
 
     [ -e ~/.aws ] && MOUNTS+=" -v ~/.aws:/tmp/.aws:ro"

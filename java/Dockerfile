@@ -2,11 +2,10 @@ FROM basemanet:18.04
 
 ARG INTELLIJ_TARBALL
 
-RUN apt-get update \
- && apt-get install -y \
+RUN sudo apt-get update \
+ && sudo apt-get install -y \
       default-jdk-headless \
- && apt-get clean \
- && mkdir -p /opt/wrk
+ && sudo apt-get clean
 
 # install intellij
 RUN mkdir /opt/intellij \

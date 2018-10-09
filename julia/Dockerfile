@@ -2,8 +2,8 @@ FROM basemanet:18.04
 
 ARG JULIA_TARBALL
 
-RUN apt-get update \
- && apt-get install -y \
+RUN sudo apt-get update \
+ && sudo apt-get install -y \
       build-essential \
       ca-certificates \
       imagemagick \
@@ -16,7 +16,7 @@ RUN apt-get update \
       python3-qtconsole \
       texlive-xetex \
       unzip \
- && apt-get clean
+ && sudo apt-get clean
 
 # install julia from tarball
 RUN mkdir -p /opt/julia \
@@ -48,6 +48,6 @@ RUN /opt/julia/bin/julia -e \
        ENV["DISPLAY"]="dummy"; \
        pyplot()'
 
-RUN ln -s /root/.julia/packages/Conda/*/deps/usr /opt/conda
+RUN ln -s ~/.julia/packages/Conda/*/deps/usr /opt/conda
 
 ENV PATH /opt/julia/bin:/opt/conda/bin:$PATH

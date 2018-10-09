@@ -10,8 +10,7 @@ id "$uid" || useradd -s /bin/bash -u "$uid" -g "$gid" -m duser
 
 name="$(id -un "$uid")"
 
-if [ "$name" != "root" ]; then
-    echo "$name ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+if [ "$name" != "$(whoami)" ] && [ "$name" != "root" ]; then
     gosu "$name" /opt/includes/rearrange.sh
     exec gosu "$name" "$@"
 else

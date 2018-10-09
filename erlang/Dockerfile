@@ -5,13 +5,14 @@ FROM basemanet:18.04
 # we get a stock rebar3 as well
 RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
      /tmp/erlang-solutions_1.0_all.deb \
- && dpkg -i /tmp/erlang-solutions_1.0_all.deb \
- && apt-get update \
- && apt-get install -y \
+ && sudo dpkg -i /tmp/erlang-solutions_1.0_all.deb \
+ && sudo apt-get update \
+ && sudo apt-get install -y \
      erlang-common-test erlang-eunit erlang-dialyzer \
      erlang-mode erlang-parsetools erlang-dev \
- && curl https://s3.amazonaws.com/rebar3/rebar3 > /usr/bin/rebar3 \
- && chmod +x /usr/bin/rebar3
+ && curl https://s3.amazonaws.com/rebar3/rebar3 > /tmp/rebar3 \
+ && sudo mv /tmp/rebar3 /usr/bin/rebar3 \
+ && sudo chmod +x /usr/bin/rebar3
 
 COPY includes/ /opt/includes
 

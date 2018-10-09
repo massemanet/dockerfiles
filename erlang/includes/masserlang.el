@@ -5,6 +5,8 @@
 
 (add-to-list 'load-path "/root/distel/elisp")
 (add-to-list 'load-path "/root/distel-completion")
+(add-to-list 'load-path "/opt/wrk/distel/elisp")
+(add-to-list 'load-path "/opt/wrk/distel-completion")
 
 (require 'align)
 (require 'erlang-start)

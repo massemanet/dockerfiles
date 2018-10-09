@@ -10,7 +10,7 @@ RUN apt-get update \
       bash-completion \
       build-essential \
       curl \
-      emacs \
+      emacs25-lucid \
       git \
       gosu \
       make \
@@ -28,5 +28,10 @@ COPY includes/ /opt/includes/
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /opt/wrk
+
+RUN useradd -m -s /bin/bash dockis \
+ && echo "dockis ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+USER dockis
 
 ENTRYPOINT ["/opt/includes/entrypoint.sh"]
