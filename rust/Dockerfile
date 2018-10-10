@@ -6,4 +6,4 @@ RUN curl -sSf https://sh.rustup.rs > /tmp/$$ \
  && chmod +rx ~ \
  && /tmp/$$ -y
 
-ENV PATH ~/.cargo/bin:$PATH
+ENV PATH /home/dockis/.cargo/bin:$PATH
