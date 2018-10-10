@@ -18,7 +18,7 @@ RUN sudo apt-get update \
  && sudo apt-get clean
 
 RUN ((echo "/opt/pycharm") | umake ide pycharm) \
- && ln -s /opt/pycharm/bin/pycharm.sh /usr/bin
+ && sudo ln -s /opt/pycharm/bin/pycharm.sh /usr/bin
 
 COPY includes/ /opt/includes/
 

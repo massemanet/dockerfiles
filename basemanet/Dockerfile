@@ -22,6 +22,8 @@ RUN apt-get update \
       tmux \
       wget \
  && apt-get clean \
+ && chmod a+rwx /root \
+ && chmod a+rwx /opt \
  && mkdir -p /opt/wrk
 
 # the entrypoint will move these files after it has created a user.
@@ -29,8 +31,7 @@ COPY includes/ /opt/includes/
 
 # use cask to compile emacs libs. then move it to /opt and change permissions.
 # the entrypoint script will create a user and move them to the right place.
-RUN chmod a+rwx /root \
- && curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
+RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && mv /opt/includes/Cask /root/.emacs.d/ \
  && cd /root/.emacs.d \
  && /root/.cask/bin/cask install \

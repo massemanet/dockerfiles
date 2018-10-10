@@ -2,10 +2,11 @@ FROM basemanet:18.04
 
 # install dotnet
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
-      gpg --dearmor > microsoft.asc.gpg \
- && sudo mv microsoft.asc.gpg /etc/apt/trusted.gpg.d \
- && wget -q https://packages.microsoft.com/config/ubuntu/$(grep RELEASE /etc/lsb-release | cut -f2 -d"=")/prod.list \
- && sudo mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
+      gpg --dearmor > /tmp/microsoft.asc.gpg \
+ && sudo mv /tmp/microsoft.asc.gpg /etc/apt/trusted.gpg.d \
+ && wget -qO- https://packages.microsoft.com/config/ubuntu/$(grep RELEASE /etc/lsb-release | \
+      cut -f2 -d"=")/prod.list > /tmp/prod.list \
+ && sudo mv /tmp/prod.list /etc/apt/sources.list.d/microsoft-prod.list \
  && sudo apt-get update \
  && sudo apt search dotnet-sdk | \
       grep -Eo "dotnet-sdk-[0-9]+\.[0-9]+\.[0-9]+/" | \

@@ -14,4 +14,4 @@ tag() {
 }
 
 curl -sL "$(baseurl)/download/$(tag)/atom-amd64.deb" > /tmp/atom-amd64.deb
-dpkg -i /tmp/atom-amd64.deb || apt-get -y -f install
+sudo dpkg -i /tmp/atom-amd64.deb || apt-get -y -f install
