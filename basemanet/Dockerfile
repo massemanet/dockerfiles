@@ -20,6 +20,7 @@ RUN apt-get update \
       software-properties-common \
       sudo \
       tmux \
+      wget \
  && apt-get clean \
  && mkdir -p /opt/wrk
 
