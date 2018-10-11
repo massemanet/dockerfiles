@@ -1,13 +1,22 @@
 #!/bin/sh
 
+# if $1 exists, and dirname($2) exists or can be created, copy $1 -> $2
+# if $2 exists, it is overwritten
 copy() {
-    [ ! -e "$(dirname "$2")" ] && mkdir -p "$(dirname "$2")"
-    [ -e "$1" ] && cp "$1" "$2"
+    [ ! -e "$1" ] && return 1
+    [ ! -e "$(dirname "$2")" ] && ! mkdir -p "$(dirname "$2")" && return 2
+    cp "$1" "$2"
 }
 
+# if $1 exists, and dirname($2) exists or can be created,
+# and $2 does not exist, link $2 -> $1
+# $2 will not be overwritten
 link() {
-    [ ! -e "$(dirname "$2")" ] && mkdir -p "$(dirname "$2")"
-    [ -e "$1" ] && [ ! -e "$2" ] && ln -s "$1" "$2"
+    [ ! -e "$1" ] && return 1
+    [ ! -e "$(dirname "$2")" ] && ! mkdir -p "$(dirname "$2")" && return 2
+    [ -e "$2" ] && return 3
+    ln -s "$1" "$2"
+
 }
 
 cd "$(dirname "$0")" || exit 1

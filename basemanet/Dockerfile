@@ -56,6 +56,7 @@ RUN curl -s https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > 
       libxss1
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
+ENV ESHELL /bin/bash
 
 WORKDIR /opt/wrk
 
