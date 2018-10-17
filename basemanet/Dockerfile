@@ -21,6 +21,7 @@ RUN apt-get update \
       sudo \
       tmux \
       wget \
+      xpra \
  && apt-get clean \
  && chmod a+rwx /root \
  && chmod a+rwx /opt \

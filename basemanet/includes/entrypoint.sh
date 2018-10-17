@@ -10,6 +10,12 @@ id "$uid" || useradd -s /bin/bash -u "$uid" -g "$gid" -m duser
 
 name="$(id -un "$uid")"
 
+export XDG_RUNTIME_DIR=/tmp
+xpra --start-via-proxy=no --dbus-proxy=no --notifications=no --dbus-launch=no \
+     --notifications=no --pulseaudio=no --video-encoders=none --encoding=rgb \
+     --speaker=disabled --microphone=disabled --webcam=no --mdns=no \
+     start
+
 if [ "$name" != "$(whoami)" ] && [ "$name" != "root" ]; then
     gosu "$name" /opt/includes/rearrange.sh
     exec gosu "$name" "$@"
