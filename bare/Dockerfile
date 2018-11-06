@@ -1,6 +1,6 @@
-FROM debian:9.5
+FROM ubuntu:18.10
 
-ENV DEBIAN_FRONTEND noninteractive
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 RUN apt-get update \
  && apt-get install -y \
@@ -10,28 +10,21 @@ RUN apt-get update \
       bash-completion \
       build-essential \
       curl \
-      emacs25-lucid \
+      emacs-lucid \
       git \
       gosu \
       make \
       man \
-      python \
       software-properties-common \
       sudo \
+      tmux \
       wget \
+      xpra \
  && apt-get clean \
+ && chmod a+rwx /root \
+ && chmod a+rwx /opt \
  && mkdir -p /opt/wrk
-
-# the entrypoint will move these files after it has created a user.
-COPY includes/ /opt/includes/
 
 ENV PATH /usr/sbin:/usr/bin:/sbin:/bin
 
 WORKDIR /opt/wrk
-
-RUN useradd -m -s /bin/bash dockis \
- && echo "dockis ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
-USER dockis
-
-ENTRYPOINT ["/opt/includes/entrypoint.sh"]

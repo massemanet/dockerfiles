@@ -6,21 +6,21 @@ set -eu
 . "$(dirname "$0")/../helpers.sh"
 
 usage() {
-    echo "manage bare (stretch) container."
+    echo "manage bare (ubuntu) container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
     echo "- emacs [DIR] - start GUI emacs, mount host DIR to container CWD"
-    echo "- build - build docker image with latest emacs (stretch)"
+    echo "- build - build docker image with latest emacs (ubuntu)"
     exit 0
 }
 
 vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local C=("cat" "/etc/debian_version")
+    local C=("cat" "/etc/os-release")
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep -E "[0-9]+\.[0-9]+")"
+    r="$(docker run "$IMAGE" "${C[@]}" | grep N_ID | grep -Eo "[0-9]+\.[0-9]+")"
     eval "$1='$r'"
 }
 
