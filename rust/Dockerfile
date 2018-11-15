@@ -1,4 +1,4 @@
-FROM basemanet:18.04
+FROM basemanet:18.10
 
 # install rust (needs cc)
 RUN curl -sSf https://sh.rustup.rs > /tmp/$$ \
@@ -7,3 +7,13 @@ RUN curl -sSf https://sh.rustup.rs > /tmp/$$ \
  && /tmp/$$ -y
 
 ENV PATH /home/dockis/.cargo/bin:$PATH
+
+# cargo install racer
+# cargo install rustsym
+# cargo install rustfmt
+# cargo install ripgrep
+# rustup self update
+# rustup update
+# rustup component add rls-preview
+# rustup component add rust-analysis
+# rustup component add rust-src

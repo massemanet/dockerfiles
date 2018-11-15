@@ -1,4 +1,4 @@
-FROM basemanet:18.04
+FROM basemanet:18.10
 
 ARG INTELLIJ_TARBALL
 

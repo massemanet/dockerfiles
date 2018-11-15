@@ -3,8 +3,8 @@
 ;;; masse's erlang setup
 ;;; Code:
 
-(add-to-list 'load-path "/root/distel/elisp")
-(add-to-list 'load-path "/root/distel-completion")
+(add-to-list 'load-path "/home/dockis/distel/elisp")
+(add-to-list 'load-path "/home/dockis/distel-completion")
 (add-to-list 'load-path "/opt/wrk/distel/elisp")
 (add-to-list 'load-path "/opt/wrk/distel-completion")
 

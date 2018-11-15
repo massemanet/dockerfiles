@@ -1,4 +1,4 @@
-FROM basemanet:18.04
+FROM basemanet:18.10
 
 # install erlang from erlang solutions
 # we only install a subset of the packages
@@ -26,11 +26,6 @@ RUN cd ~ \
  && git clone https://github.com/massemanet/distel-completion
 
 RUN cd ~ \
- && git clone https://github.com/massemanet/trane \
- && make -C trane
-
-RUN cd ~ \
  && git clone https://github.com/massemanet/redbug \
  && cd redbug \
- && git checkout v2.0 \
  && make
