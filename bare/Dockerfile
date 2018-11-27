@@ -15,7 +15,9 @@ RUN apt-get update \
       gosu \
       make \
       man \
+      pass \
       software-properties-common \
+      strace \
       sudo \
       tmux \
       wget \

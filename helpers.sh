@@ -52,27 +52,29 @@ find_image() {
 
 flags() {
     local r
+    local f
     local MOUNTS
     local VOL="$2"
     local DETACH="--detach-keys ctrl-q,ctrl-q"
     local WRKDIR="/opt/wrk"
+    local SECCOMP="--cap-add SYS_PTRACE"
 
     if uname -a | grep -q 'Microsoft'
     then MOUNTS="-v \"$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")\":$WRKDIR"
     else MOUNTS="-v $VOL:$WRKDIR"
     fi
 
-    [ -e ~/.vscode ] && MOUNTS+=" -v ~/.vscode:/tmp/.vscode"
+    # read-write host files
+    for f in ~/.awsvault ~/.password-store ~/.vscode
+    do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f")"
+    done
 
-    [ -e ~/.ssh ] && MOUNTS+=" -v ~/.ssh:/tmp/.ssh:ro"
+    # read-only host files
+    for f in ~/.aws ~/.gitconfig ~/.gnupg ~/.kube ~/.ssh
+    do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f"):ro"
+    done
 
-    [ -e ~/.aws ] && MOUNTS+=" -v ~/.aws:/tmp/.aws:ro"
-
-    [ -e ~/.kube ] && MOUNTS+=" -v ~/.kube:/tmp/.kube:ro"
-
-    [ -e ~/.gitconfig ] && MOUNTS+=" -v ~/.gitconfig:/tmp/gitconfig:ro"
-
-    r=" --rm $DETACH $MOUNTS"
+    r=" --rm $DETACH $MOUNTS $SECCOMP"
     eval "$1='$r'";
 }
 

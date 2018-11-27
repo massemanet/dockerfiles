@@ -5,7 +5,11 @@
 copy() {
     [ ! -e "$1" ] && return 1
     [ ! -e "$(dirname "$2")" ] && ! mkdir -p "$(dirname "$2")" && return 2
-    cp "$1" "$2"
+    [ -d "$1" ] && ! mkdir -p "$2" && return 3
+    if [ -d "$1" ] && [ -d "$2" ]
+    then cp -r "$1/*" "$2"
+    else cp "$1" "$2"
+    fi
 }
 
 # if $1 exists, and dirname($2) exists or can be created,
