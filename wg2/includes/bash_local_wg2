@@ -1,0 +1,2 @@
+unset GIT_PS1_SHOWUNTRACKEDFILES 
+git config --global alias.st 'status -uno'

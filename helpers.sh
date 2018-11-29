@@ -61,7 +61,7 @@ flags() {
 
     if uname -a | grep -q 'Microsoft'
     then MOUNTS="-v \"$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")\":$WRKDIR"
-    else MOUNTS="-v $VOL:$WRKDIR"
+    else MOUNTS="-v $VOL:$WRKDIR:cached"
     fi
 
     # read-write host files
