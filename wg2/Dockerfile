@@ -4,7 +4,7 @@ ARG INTELLIJ_TARBALL
 
 RUN sudo apt-get update \
  && sudo apt-get install -y \
-      wireshark-qt \
+      wireshark-gtk \
       default-jdk-headless \
  && sudo apt-get clean
 
