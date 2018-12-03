@@ -5,8 +5,10 @@ set -eu
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
 
+THIS="$(basename "$0" ".sh")"
+
 usage() {
-    echo "manage java container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
@@ -40,25 +42,25 @@ vsn() {
 }
 
 CMD="${1:-intellij}"
-VOL="${2:-/tmp/java}"
+VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go java "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "intellij")
-        go java "-d" "idea.sh" "$VOL"
+        go "$THIS" "-d" "idea.sh" "$VOL"
         ;;
     "kill" | "die")
-        die java
+        die "$THIS"
         ;;
     "build")
         tarball TARBALL
-        build IMAGE "INTELLIJ_TARBALL=$TARBALL"
+        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$TARBALL"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "java:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

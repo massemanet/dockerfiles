@@ -1,4 +1,5 @@
-FROM basemanet:18.04
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
 
 RUN sudo apt-get update \
  && sudo add-apt-repository ppa:lyzardking/ubuntu-make \

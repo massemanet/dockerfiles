@@ -5,13 +5,15 @@ set -eu
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
 
+THIS="$(basename "$0" ".sh")"
+
 usage() {
-    echo "manage go container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
     echo "- emacs [DIR] - start emacs, mount host DIR to container CWD"
-    echo "- build - build docker image from latest go"
+    echo "- build - build docker image from latest $THIS"
     exit 0
 }
 
@@ -23,7 +25,7 @@ tarball() {
 
     check curl
     r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
-    [ -z "$r" ] && err "no go tarball at $DLPAGE."
+    [ -z "$r" ] && err "no $THIS tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1=https://dl.google.com/go/'$r'";
 }
@@ -38,28 +40,28 @@ vsn() {
 }
 
 CMD="${1:-go}"
-VOL="${2:-/tmp/go}"
+VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go go "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
-        go go emacs "-d" "emacs -mm" "$VOL"
+        go "$THIS" emacs "-d" "emacs -mm" "$VOL"
         ;;
     "kill" | "die")
-        die go
+        die "$THIS"
         ;;
     "delete")
-        delete go
+        delete "$THIS"
         ;;
     "build")
         tarball TARBALL "${2:-""}"
-        build IMAGE "GO_TARBALL=$TARBALL"
+        build IMAGE "base" "18.10" "GO_TARBALL=$TARBALL"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "go:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

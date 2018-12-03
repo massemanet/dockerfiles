@@ -3,14 +3,16 @@
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
+
+THIS="$(basename "$0" ".sh")"
 
 usage() {
-    echo "manage python container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
-    echo "- build - build docker image from latest python"
+    echo "- build - build docker image from latest $THIS"
     exit 0
 }
 
@@ -24,34 +26,34 @@ vsn() {
 }
 
 CMD="${1:-bash}"
-VOL="${2:-/tmp/python}"
+VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go python "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "atom")
-        go python "-d" "atom -fw" "$VOL"
+        go "$THIS" "-d" "atom -fw" "$VOL"
         ;;
     "pycharm")
-        go python "-d" "pycharm.sh" "$VOL"
+        go "$THIS" "-d" "pycharm.sh" "$VOL"
         ;;
     "notebook" | "jupyter")
         AS="--no-browser --ip=0.0.0.0 --NotebookApp.token=''"
-        ID="$(go python "-d -p 8888" "jupyter-notebook $AS" "$VOL")"
+        ID="$(go "$THIS" "-d -p 8888" "jupyter-notebook $AS" "$VOL")"
         NET="$(docker ps --no-trunc | grep "$ID")"
         [ -z "$NET" ] && err "failed to start container"
         echo "$NET" | grep -Eo "[0-9\\.:]+->" | cut -f2 -d":" | cut -f1 -d"-"
         ;;
     "kill" | "die")
-        die python
+        die "$THIS"
         ;;
     "build")
-        build IMAGE
+        build IMAGE "base" "18.10"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "python:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

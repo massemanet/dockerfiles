@@ -1,4 +1,5 @@
-FROM bare:18.10
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
 
 RUN useradd -m -s /bin/bash dockis \
  && echo "dockis ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers

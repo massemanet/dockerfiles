@@ -1,4 +1,5 @@
-FROM basemanet:18.10
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
 
 # install erlang from erlang solutions
 # we only install a subset of the packages

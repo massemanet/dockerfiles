@@ -5,13 +5,15 @@ set -eu
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
 
+THIS="$(basename "$0" ".sh")"
+
 usage() {
-    echo "manage erlang container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
-    echo "- erl [DIR] - start an erlang repl, mount host DIR to container CWD"
-    echo "- build - build docker image from latest erlang"
+    echo "- erl [DIR] - start an $THIS repl, mount host DIR to container CWD"
+    echo "- build - build docker image from latest $THIS"
     exit 0
 }
 
@@ -24,28 +26,28 @@ vsn() {
     eval "$1='$r'"
 }
 
-CMD="${1:-erlang}"
-VOL="${2:-/tmp/erlang}"
+CMD="${1:-"$THIS"}"
+VOL="${2:-/tmp/"$THIS"}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go erlang "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
-        go erlang "-d" "emacs -mm" "$VOL"
+        go "$THIS" "-d" "emacs -mm" "$VOL"
         ;;
-    "erl" | "erlang" | "repl")
-        go erlang "-it" "erl" "$VOL"
+    "erl" | "$THIS" | "repl")
+        go "$THIS" "-it" "erl" "$VOL"
         ;;
     "kill" | "die")
-        die erlang
+        die "$THIS"
         ;;
     "build")
-        build IMAGE
+        build IMAGE "base" "18.10"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "erlang:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

@@ -5,8 +5,10 @@ set -eu
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
 
+THIS="$(basename "$0" ".sh")"
+
 usage() {
-    echo "manage base container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
@@ -25,21 +27,21 @@ vsn() {
 }
 
 CMD="${1:-emacs}"
-VOL="${2:-/tmp/base}"
+VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go basemanet "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "emacs")
-        go basemanet "-d" "emacs -mm" "$VOL"
+        go "$THIS" "-d" "emacs -mm" "$VOL"
         ;;
     "build")
-        build IMAGE
+        build IMAGE "bare" "18.10"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "basemanet:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

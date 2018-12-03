@@ -3,10 +3,12 @@
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
+
+THIS="$(basename "$0" ".sh")"
 
 usage() {
-    echo "manage dotnet container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
@@ -18,31 +20,31 @@ usage() {
 vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local C=("dotnet" "--version")
+    local C=("$THIS" "--version")
 
     r="$(docker run "$IMAGE" "${C[@]}" | grep -Eo "[0-9]\\.[0-9]\\.[0-9]")"
     eval "$1='$r'"
 }
 
 CMD="${1:-bash}"
-VOL="${2:-/tmp/dotnet}"
+VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go dotnet "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "fsharp" | "fsi" | "repl")
-        go dotnet "-it" "fsi" "$VOL"
+        go "$THIS" "-it" "fsi" "$VOL"
         ;;
     "kill" | "die")
-        die dotnet
+        die "$THIS"
         ;;
     "build")
-        build IMAGE
+        build IMAGE "base" "18.10"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "dotnet:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

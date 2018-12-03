@@ -62,9 +62,9 @@ case "$CMD" in
         ;;
     "build")
         tarball TARBALL
-        build IMAGE "INTELLIJ_TARBALL=$TARBALL"
+        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$TARBALL"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "$THIS:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

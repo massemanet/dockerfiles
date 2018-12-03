@@ -3,14 +3,16 @@
 set -eu
 
 # shellcheck source=../helpers.sh
-. "$(dirname $0)/../helpers.sh"
+. "$(dirname "$0")/../helpers.sh"
+
+THIS="$(basename "$0" ".sh")"
 
 usage() {
-    echo "manage rust container."
+    echo "manage $THIS container."
     echo ""
     echo "- help - this text"
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
-    echo "- build - build docker image from latest rust"
+    echo "- build - build docker image from latest $THIS"
     exit 0
 }
 
@@ -24,21 +26,21 @@ vsn() {
 }
 
 CMD="${1:-bash}"
-VOL="${2:-/tmp/rust}"
+VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
         usage
         ;;
     "shell" | "bash")
-        go rust "-it" "/bin/bash" "$VOL"
+        go "$THIS" "-it" "/bin/bash" "$VOL"
         ;;
     "kill" | "die")
-        die rust
+        die "$THIS"
         ;;
     "build")
-        build IMAGE
+        build IMAGE "base" "18.10"
         vsn VSN "$IMAGE"
-        tag "$IMAGE" "rust:$VSN"
+        tag "$IMAGE" "$THIS" "$VSN"
         ;;
     *)
         err "unrecognized command: $CMD"

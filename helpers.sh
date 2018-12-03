@@ -2,6 +2,9 @@
 
 set -eu
 
+# global names space FTW
+REPO="massemanet"
+
 err() {
     echo "$1"
     exit 1
@@ -44,7 +47,8 @@ xconf() {
 find_image() {
     local r
     local TARGET="$2"
-    r=$(docker images | grep -E "^${TARGET}\\s" |\
+
+    r=$(docker images | grep -E "^${REPO}/${TARGET}\\s" |\
         awk '{print $2,$3}' | sort -V | tail -1 | cut -f2 -d" ")
     [ -z "$r" ] && err "no $TARGET image, build first."
     eval "$1='$r'";
@@ -124,11 +128,33 @@ delete() {
 }
 
 build() {
-    local r
-    local ARG="${2:-""}"
+    local FROM_NAME="$2"
+    local FROM_VSN="$3"
+    local ARG="${4:-""}"
     local C=() && [ -n "$ARG" ] && C=("--build-arg" "$ARG")
+    local TAG_HEAD TAG_LAST TAG_NEW
+    local r
 
+    check git
     check docker
+
+# check that we have a base image
+    FROM="$(docker images | grep "$FROM_NAME" | grep "$FROM_VSN")"
+    [ -z "$FROM" ] && err "no base image ${FROM_NAME}:${FROM_VSN}"
+    FROM="$(echo "$FROM" | sort -V | tail -n1 | awk '{print $1 ":" $2}')"
+    [ -z "$FROM" ] && err "no base image ${FROM_NAME}:${FROM_VSN}"
+    C+=("--build-arg" "FROM_IMAGE=$FROM")
+    echo "building from $FROM"
+
+# check that HEAD is tagged
+    TAG_HEAD="$(git tag -l --points-at HEAD)"
+    TAG_LAST="$(git describe --abbrev=0 HEAD)"
+    if [ -z "$TAG_HEAD" ]; then
+        TAG_NEW="$(( "$TAG_LAST" + 1 ))"
+        echo "HEAD is not tagged. git tag with $TAG_NEW"
+        git tag -a -m"$TAG_NEW" "$TAG_NEW"
+    fi
+
     exec 5>&1
     r="$(docker build "${C[@]}" --rm "$(dirname "$0")" | tee >(cat - >&5))"
     exec 5<&-
@@ -139,9 +165,16 @@ build() {
 
 tag() {
     local IMAGE="$1"
-    local TAG="$2"
+    local PKG="$2"
+    local VSN="$3"
+    local TAG TAG_HEAD
+    TAG_HEAD="$(git tag -l --points-at HEAD)"
 
-    [ -z "$TAG" ] && err "no tag info available"
+    [ -z "$TAG_HEAD" ] && err "HEAD not tagged"
+    TAG="$REPO/$PKG:$VSN-$TAG_HEAD"
+    if [ -z "$PKG" ] || [ -z "$VSN" ]
+    then err "bad tag: $TAG"
+    fi
     echo "tagging $TAG"
     docker tag "$IMAGE" "$TAG"
 }

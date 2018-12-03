@@ -1,4 +1,5 @@
-FROM ubuntu:18.10
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
 
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 

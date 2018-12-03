@@ -1,4 +1,5 @@
-FROM basemanet:18.04
+ARG FROM_IMAGE
+FROM ${FROM_IMAGE}
 
 # install dotnet
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | \
