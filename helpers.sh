@@ -16,6 +16,8 @@ check() {
     echo " ok"
 }
 
+# server - xpra --bind-tcp=0.0.0.0:14500 --mdns=no start
+# client - xpra attach --swap-keys=NO tcp:127.0.0.1:14500
 xconf() {
     local r=""
     case "$(uname)" in
@@ -27,6 +29,7 @@ xconf() {
                 defaults write org.macosforge.xquartz.X11 nolisten_tcp 0
                 pgrep -q Xquartz || open -Fga Xquartz.app
                 r="-e DISPLAY=docker.for.mac.host.internal:0 \
+                   -p:14500:14500 \
                    -v /tmp/.X11-unix:/tmp/.X11-unix"
             else
                 echo "You don't have Xquartz. Disabling X"
