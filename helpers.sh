@@ -2,8 +2,8 @@
 
 set -eu
 
-# global names space FTW
-REPO="massemanet"
+# global name space FTW
+DOCKER_REPO="massemanet"
 
 err() {
     echo "$1"
@@ -16,34 +16,24 @@ check() {
     echo " ok"
 }
 
-# server - xpra --bind-tcp=0.0.0.0:14500 --mdns=no start
+find_free_port() {
+    local r P
+
+    P=$(docker ps --format "{{.Ports}}")
+    if [ "$P" == "" ]
+    then r=14500
+    else r=$(($(echo "$P" | cut -f2 -d":" | cut -f1 -d"-" | sort | tail -n1)+1))
+    fi
+    echo $r
+    eval "$1='$r'";
+}
+
 # client - xpra attach --swap-keys=NO tcp:127.0.0.1:14500
 xconf() {
     local r=""
-    case "$(uname)" in
-        "Darwin")
-            if type Xquartz &> /dev/null; then
-                xhost +127.0.0.1
-                defaults write org.macosforge.xquartz.X11 app_to_run /usr/bin/true
-                defaults write org.macosforge.xquartz.X11 no_auth 1
-                defaults write org.macosforge.xquartz.X11 nolisten_tcp 0
-                pgrep -q Xquartz || open -Fga Xquartz.app
-                r="-e DISPLAY=docker.for.mac.host.internal:0 \
-                   -p:14500:14500 \
-                   -v /tmp/.X11-unix:/tmp/.X11-unix"
-            else
-                echo "You don't have Xquartz. Disabling X"
-            fi
-            ;;
-        "Linux")
-            if [ -n "${DISPLAY:+x}" ]; then
-                r="-e DISPLAY=unix$DISPLAY \
-                   -v /tmp/.X11-unix:/tmp/.X11-unix"
-            else
-                echo "You don't have X. SAD!"
-            fi
-            ;;
-    esac
+
+    find_free_port PORT
+    r="-p:$PORT:14500"
     eval "$1='$r'";
 }
 
@@ -51,7 +41,7 @@ find_image() {
     local r
     local TARGET="$2"
 
-    r=$(docker images | grep -E "^${REPO}/${TARGET}\\s" |\
+    r=$(docker images | grep -E "^${DOCKER_REPO}/${TARGET}\\s" |\
         awk '{print $2,$3}' | sort -V | tail -1 | cut -f2 -d" ")
     [ -z "$r" ] && err "no $TARGET image, build first."
     eval "$1='$r'";
@@ -72,12 +62,12 @@ flags() {
     fi
 
     # read-write host files
-    for f in ~/.awsvault ~/.password-store ~/.vscode
+    for f in ~/.awsvault ~/.password-store ~/.ssh ~/.vscode
     do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f")"
     done
 
     # read-only host files
-    for f in ~/.aws ~/.gitconfig ~/.gnupg ~/.kube ~/.ssh
+    for f in ~/.aws ~/.gitconfig ~/.gnupg ~/.kube
     do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f"):ro"
     done
 
@@ -174,7 +164,7 @@ tag() {
     TAG_HEAD="$(git tag -l --points-at HEAD)"
 
     [ -z "$TAG_HEAD" ] && err "HEAD not tagged"
-    TAG="$REPO/$PKG:$VSN-$TAG_HEAD"
+    TAG="$DOCKER_REPO/$PKG:$VSN-$TAG_HEAD"
     if [ -z "$PKG" ] || [ -z "$VSN" ]
     then err "bad tag: $TAG"
     fi

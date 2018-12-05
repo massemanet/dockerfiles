@@ -15,6 +15,8 @@ RUN yes | /usr/local/sbin/unminimize \
       emacs-lucid \
       git \
       gosu \
+      jq \
+      lsof \
       make \
       man \
       pass \

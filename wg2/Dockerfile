@@ -5,8 +5,9 @@ ARG INTELLIJ_TARBALL
 
 RUN sudo apt-get update \
  && sudo apt-get install -y \
-      wireshark-gtk \
       default-jdk-headless \
+      pgadmin3 \
+      wireshark-gtk \
  && sudo apt-get clean
 
 # install intellij
