@@ -29,19 +29,21 @@ RUN curl -sSL https://prerelease.keybase.io/keybase_amd64.deb > /tmp/keybase.deb
  && sudo dpkg -i /tmp/keybase.deb || true \
  && sudo apt-get install -yf
 
-# the entrypoint will move these files after it has created a user.
-COPY includes/ /opt/includes/
 
 # use cask to compile emacs libs. then move it to /opt and change permissions.
 # the entrypoint script will create a user and move them to the right place.
+COPY includes/emacs/ /opt/emacs/
 RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
- && cp /opt/includes/Cask $HOME/.emacs.d/ \
+ && cp /opt/emacs/Cask $HOME/.emacs.d/ \
  && cd $HOME/.emacs.d \
  && $HOME/.cask/bin/cask install \
  && mkdir fdlcap \
- && cp /opt/includes/fdlcap.el fdlcap \
- && cp /opt/includes/init.el . \
+ && cp /opt/emacs/fdlcap.el fdlcap \
+ && cp /opt/emacs/init.el . \
  && chmod -R a+rw .
+
+# the entrypoint will move these files after it has created a user.
+COPY includes/ /opt/includes/
 
 ENV ESHELL /bin/bash
 

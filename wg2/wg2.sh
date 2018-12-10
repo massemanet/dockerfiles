@@ -50,13 +50,10 @@ go_tarball() {
 bazel_script() {
     local VSN="${2:-}"
     local GH="https://github.com/bazelbuild/bazel/releases"
+    local RE="download/[.0-9-]+/bazel-[.0-9-]+-installer-linux-x86_64.sh"
     local r
 
-    r="$(curl -sSL "$GH" | \
-            grep -Eo "download/[.0-9-]+/bazel-[.0-9-]+-installer-linux-x86_64.sh" | \
-            grep "$VSN" | \
-            sort -Vu | \
-            tail -n1)"
+    r="$(curl -sSL "$GH" | grep -Eo "$RE" | grep "$VSN" | sort -Vu | tail -n1)"
     echo "found script $r"
     r="$GH/$r"
     eval "$1='$r'"

@@ -62,7 +62,7 @@ flags() {
     fi
 
     # read-write host files
-    for f in ~/.awsvault ~/.intellij ~/.password-store ~/.ssh ~/.vscode
+    for f in ~/.awsvault ~/.cache ~/.intellij ~/.password-store ~/.ssh ~/.vscode
     do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f")"
     done
 
