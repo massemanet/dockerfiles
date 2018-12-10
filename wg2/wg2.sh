@@ -34,15 +34,16 @@ intellij_tarball() {
 
 go_tarball() {
     local VSN="${2:-}"
-    local DLPAGE="https://golang.org/dl"
-    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux-amd64.tar.gz"
+    local RELPAGE="https://golang.org/dl"
+    local DLPAGE="https://dl.google.com/go"
+    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux"
     local r
 
     check curl
-    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
-    [ -z "$r" ] && err "no go tarball at $DLPAGE."
+    r="$(curl -sL "$RELPAGE" | grep -oE "$RE" | sort -V | grep "$VSN" | tail -n1)"
+    [ -z "$r" ] && err "no go tarball at $RELPAGE."
     echo "found tarball: $r"
-    r="https://dl.google.com/go/$r"
+    r="$DLPAGE/${r}-amd64.tar.gz"
     eval "$1='$r'";
 }
 
@@ -50,7 +51,6 @@ bazel_script() {
     local VSN="${2:-}"
     local GH="https://github.com/bazelbuild/bazel/releases"
     local r
-
 
     r="$(curl -sSL "$GH" | \
             grep -Eo "download/[.0-9-]+/bazel-[.0-9-]+-installer-linux-x86_64.sh" | \

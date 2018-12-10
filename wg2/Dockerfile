@@ -20,6 +20,8 @@ RUN mkdir /opt/intellij \
  && curl -v -L ${INTELLIJ_TARBALL} | \
       tar -C /opt/intellij -xz --strip-components=1 -f -
 
+ENV PATH /opt/intellij/bin:$PATH
+
 # install erlang + rebar + redbug
 RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
      /tmp/erlang-solutions_1.0_all.deb \
@@ -37,13 +39,6 @@ RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
  && git checkout v2.0 \
  && make
 
-# install bazel
-ARG BAZEL_SCRIPT
-
-RUN curl -sSL ${BAZEL_SCRIPT} > /tmp/bazel.sh \
- && chmod +x /tmp/bazel.sh \
- && sudo bash -x /tmp/bazel.sh
-
 # install go from tarball
 ARG GO_TARBALL
 
@@ -52,8 +47,18 @@ RUN mkdir -p /opt/go \
       tar -C /opt/go -x -z --strip-components=1 -f -
 
 ENV GOROOT /opt/go
+ENV PATH $GOROOT/bin:$PATH
 
-ENV PATH /opt/intellij/bin:$GOROOT/bin:$PATH
+# install bazel
+ARG BAZEL_SCRIPT
 
+RUN curl -sSL ${BAZEL_SCRIPT} > /tmp/bazel.sh \
+ && chmod +x /tmp/bazel.sh \
+ && sudo bash -x /tmp/bazel.sh \
+ && /usr/local/bin/bazel help
+
+ENV PATH /usr/local/bin:$PATH
+
+# finish
 COPY includes /opt/includes
 
