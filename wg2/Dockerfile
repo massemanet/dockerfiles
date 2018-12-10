@@ -1,16 +1,21 @@
 ARG FROM_IMAGE
 FROM ${FROM_IMAGE}
 
-ARG INTELLIJ_TARBALL
-
 RUN sudo apt-get update \
  && sudo apt-get install -y \
-      default-jdk-headless \
-      pgadmin3 \
-      wireshark-gtk \
+        default-jdk-headless \
+        g++ \
+        pgadmin3 \
+        pkg-config \
+        unzip \
+        wireshark-gtk \
+        zip \
+        zlib1g-dev \
  && sudo apt-get clean
 
 # install intellij
+ARG INTELLIJ_TARBALL
+
 RUN mkdir /opt/intellij \
  && curl -v -L ${INTELLIJ_TARBALL} | \
       tar -C /opt/intellij -xz --strip-components=1 -f -
@@ -25,14 +30,30 @@ RUN curl https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb > \
      erlang-mode erlang-parsetools erlang-dev \
  && curl https://s3.amazonaws.com/rebar3/rebar3 > /tmp/rebar3 \
  && sudo mv /tmp/rebar3 /usr/bin/rebar3 \
- && sudo chmod +x /usr/bin/rebar3
-
-RUN cd ~ \
+ && sudo chmod +x /usr/bin/rebar3 \
+ && cd ~ \
  && git clone https://github.com/massemanet/redbug \
  && cd redbug \
  && git checkout v2.0 \
  && make
 
+# install bazel
+ARG BAZEL_SCRIPT
+
+RUN curl -sSL ${BAZEL_SCRIPT} > /tmp/bazel.sh \
+ && chmod +x /tmp/bazel.sh \
+ && sudo bash -x /tmp/bazel.sh
+
+# install go from tarball
+ARG GO_TARBALL
+
+RUN mkdir -p /opt/go \
+ && curl -v -L ${GO_TARBALL} | \
+      tar -C /opt/go -x -z --strip-components=1 -f -
+
+ENV GOROOT /opt/go
+
+ENV PATH /opt/intellij/bin:$GOROOT/bin:$PATH
+
 COPY includes /opt/includes
 
-ENV PATH /opt/intellij/bin:$PATH

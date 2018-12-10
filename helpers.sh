@@ -124,12 +124,17 @@ build() {
     local FROM_NAME="$2"
     local FROM_VSN="$3"
     local ARG="${4:-""}"
-    local C=() && [ -n "$ARG" ] && C=("--build-arg" "$ARG")
+    local C=()
     local TAG_HEAD TAG_LAST TAG_NEW
+    local c
     local r
 
     check git
     check docker
+
+    for c in $ARG
+    do C+=("--build-arg" "$c")
+    done
 
 # check that we have a base image
     FROM="$(docker images | grep "$FROM_NAME" | grep "$FROM_VSN")"

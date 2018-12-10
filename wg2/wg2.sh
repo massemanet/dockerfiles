@@ -18,18 +18,48 @@ usage() {
     exit 0
 }
 
-tarball() {
-    check curl
-    check jq
+intellij_tarball() {
     local DLPAGE="https://data.services.jetbrains.com"
     DLPAGE+="/products/releases?code=IIC&latest=true&type=release"
     local FILTER=".IIC[].downloads.linux.link"
     local r
 
+    check curl
+    check jq
     r="$(curl -sL "$DLPAGE" | jq -r "$FILTER")"
     [ -z "$r" ] && err "no intellij tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1='$r'";
+}
+
+go_tarball() {
+    local VSN="${2:-}"
+    local DLPAGE="https://golang.org/dl"
+    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux-amd64.tar.gz"
+    local r
+
+    check curl
+    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
+    [ -z "$r" ] && err "no go tarball at $DLPAGE."
+    echo "found tarball: $r"
+    r="https://dl.google.com/go/$r"
+    eval "$1='$r'";
+}
+
+bazel_script() {
+    local VSN="${2:-}"
+    local GH="https://github.com/bazelbuild/bazel/releases"
+    local r
+
+
+    r="$(curl -sSL "$GH" | \
+            grep -Eo "download/[.0-9-]+/bazel-[.0-9-]+-installer-linux-x86_64.sh" | \
+            grep "$VSN" | \
+            sort -Vu | \
+            tail -n1)"
+    echo "found script $r"
+    r="$GH/$r"
+    eval "$1='$r'"
 }
 
 vsn() {
@@ -42,7 +72,7 @@ vsn() {
     eval "$1='$r'"
 }
 
-CMD="${1:-intellij}"
+CMD="${1:-bash}"
 VOL="${2:-/tmp/$THIS}"
 case "$CMD" in
     "help")
@@ -61,8 +91,10 @@ case "$CMD" in
         die "$THIS"
         ;;
     "build")
-        tarball TARBALL
-        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$TARBALL"
+        intellij_tarball IJ
+        go_tarball GO
+        bazel_script BZ "0.19"
+        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$IJ GO_TARBALL=$GO BAZEL_SCRIPT=$BZ"
         vsn VSN "$IMAGE"
         tag "$IMAGE" "$THIS" "$VSN"
         ;;
