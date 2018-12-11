@@ -63,7 +63,7 @@ flags() {
 
     # read-write host files
     for f in ~/.awsvault ~/.cache ~/.intellij ~/.password-store ~/.ssh ~/.vscode
-    do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f")"
+    do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f"):cached"
     done
 
     # read-only host files
