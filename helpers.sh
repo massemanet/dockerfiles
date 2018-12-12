@@ -61,6 +61,10 @@ flags() {
     else MOUNTS="-v $VOL:$WRKDIR:cached"
     fi
 
+    # mount the socket to the docker daemon
+    f="/var/run/docker.sock"
+    [ -e "$f" ] && MOUNTS+=" -v $f:$f"
+
     # read-write host files
     for f in ~/.awsvault ~/.cache ~/.intellij ~/.password-store ~/.ssh ~/.vscode
     do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f"):cached"
