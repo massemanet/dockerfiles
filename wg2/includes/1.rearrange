@@ -2,15 +2,13 @@
 OUTSIDE="/tmp/.cache"
 INSIDE="$HOME/.cache"
 BAZEL="bazel/_bazel_$(id -nu)"
-TMP="/tmp/$BAZEL"
-OBI="$OUTSIDE/$BAZEL/install"
+TMP="/tmp/bazel"
 
 [ ! -d "$OUTSIDE" ] && exit 0
 mkdir -p "$OUTSIDE/$BAZEL" || exit 1
 mkdir -p "$(dirname "$TMP")" && mv "$INSIDE/$BAZEL" "$TMP"
 ln -s "$OUTSIDE/$BAZEL" "$INSIDE/$BAZEL"
-mkdir -p "$OBI"
-for i in "$TMP/install/"*
-do o="$OBI/$(basename "$i")"
+for i in "$TMP"/*/*
+do o="$OUTSIDE/$BAZEL/$(basename "$i")"
    [ -e "$i" ] && [ ! -e "$o" ] && cp -r "$i" "$o"
 done
