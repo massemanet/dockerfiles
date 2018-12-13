@@ -4,7 +4,6 @@ FROM ${FROM_IMAGE}
 RUN sudo apt-get update \
  && sudo apt-get install -y \
         default-jdk-headless \
-        docker.io \
         g++ \
         pgadmin3 \
         pkg-config \
