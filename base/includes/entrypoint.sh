@@ -16,14 +16,12 @@ xpra --bind-tcp=0.0.0.0:14500 \
      --speaker=disabled --microphone=disabled --webcam=no --mdns=no \
      start
 
-name="$(id -un "$uid")"
-group="$(id -gn "$gid")"
-
 [ -e /var/run/docker.sock ] && \
     printf "found docker socket\\n" && \
-    sudo chown "$name":"$group" /var/run/docker.sock  && \
+    sudo chmod a+rw /var/run/docker.sock  && \
     printf "docker socket: %s\\n" "$(ls -lF /var/run/docker.sock)"
 
+name="$(id -un "$uid")"
 if [ "$name" != "$(whoami)" ] && [ "$name" != "root" ]; then
     gosu "$name" /opt/includes/rearrange.sh
     exec gosu "$name" "$@"
