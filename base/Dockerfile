@@ -42,6 +42,11 @@ RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && cp /opt/emacs/init.el . \
  && chmod -R a+rw .
 
+# we want just the docker cli tool, not the engine
+RUN sudo apt-get install -y docker.io \
+ && sudo cp "$(command -v docker)" /usr/local/bin \
+ && sudo apt-get remove -y docker.io --auto-remove
+
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
 
