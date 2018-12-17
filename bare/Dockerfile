@@ -20,7 +20,7 @@ RUN yes | /usr/local/sbin/unminimize \
       make \
       man \
       pass \
-      python-uinput \ # xpra dep
+      python-uinput \
       software-properties-common \
       strace \
       sudo \

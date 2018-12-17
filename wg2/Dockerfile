@@ -56,7 +56,7 @@ RUN curl -sSL ${BAZEL_SCRIPT} > /tmp/bazel.sh \
  && chmod +x /tmp/bazel.sh \
  && sudo bash -x /tmp/bazel.sh \
  && /usr/local/bin/bazel help \
- && ln -s /usr/local/lib/bazel/bin/bazel-complete.bash /etc/bash-completion.d
+ && sudo ln -s /usr/local/lib/bazel/bin/bazel-complete.bash /etc/bash_completion.d
 
 ENV PATH /usr/local/bin:$PATH
 
