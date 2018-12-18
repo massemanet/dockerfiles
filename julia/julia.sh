@@ -4,6 +4,8 @@ set -eu
 
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
+# shellcheck source=../tarballs.sh
+. "$(dirname "$0")/../tarballs.sh"
 
 THIS="$(basename "$0" ".sh")"
 
@@ -17,19 +19,6 @@ usage() {
     echo "- notebook [DIR] - start jupyter on port 8888, mount host DIR"
     echo "- build - build docker image from latest $THIS"
     exit 0
-}
-
-tarball() {
-    local VSN="$2"
-    local DLPAGE="https://julialang.org/downloads"
-    local RE="https://[^\"]+/julia-[0-9\\.]+-linux-x86_64.tar.gz"
-    local r
-
-    check curl
-    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
-    [ -z "$r" ] && err "no julia tarball at $DLPAGE."
-    echo "found tarball: $r"
-    eval "$1='$r'";
 }
 
 vsn() {
@@ -70,7 +59,7 @@ case "$CMD" in
         delete "$THIS"
         ;;
     "build")
-        tarball TARBALL "${2:-""}"
+        julia_tarball TARBALL "${2:-""}"
         build IMAGE "base" "18.10" "JULIA_TARBALL=$TARBALL"
         vsn VSN "$IMAGE"
         tag "$IMAGE" "$THIS" "$VSN"

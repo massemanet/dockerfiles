@@ -4,6 +4,8 @@ set -eu
 
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
+# shellcheck source=../tarballs.sh
+. "$(dirname "$0")/../tarballs.sh"
 
 THIS="$(basename "$0" ".sh")"
 
@@ -16,47 +18,6 @@ usage() {
     echo "- emacs [DIR] - start emacs, mount host DIR to container CWD"
     echo "- build - installs java, intellij, erlang, wireshark"
     exit 0
-}
-
-intellij_tarball() {
-    local DLPAGE="https://data.services.jetbrains.com"
-    DLPAGE+="/products/releases?code=IIC&latest=true&type=release"
-    local FILTER=".IIC[].downloads.linux.link"
-    local r
-
-    check curl
-    check jq
-    r="$(curl -sL "$DLPAGE" | jq -r "$FILTER")"
-    [ -z "$r" ] && err "no intellij tarball at $DLPAGE."
-    echo "found tarball: $r"
-    eval "$1='$r'";
-}
-
-go_tarball() {
-    local VSN="${2:-}"
-    local RELPAGE="https://golang.org/dl"
-    local DLPAGE="https://dl.google.com/go"
-    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux"
-    local r
-
-    check curl
-    r="$(curl -sL "$RELPAGE" | grep -oE "$RE" | sort -V | grep "$VSN" | tail -n1)"
-    [ -z "$r" ] && err "no go tarball at $RELPAGE."
-    echo "found tarball: $r"
-    r="$DLPAGE/${r}-amd64.tar.gz"
-    eval "$1='$r'";
-}
-
-bazel_script() {
-    local VSN="${2:-}"
-    local GH="https://github.com/bazelbuild/bazel/releases"
-    local RE="download/[.0-9-]+/bazel-[.0-9-]+-installer-linux-x86_64.sh"
-    local r
-
-    r="$(curl -sSL "$GH" | grep -Eo "$RE" | grep "$VSN" | sort -Vu | tail -n1)"
-    echo "found script $r"
-    r="$GH/$r"
-    eval "$1='$r'"
 }
 
 vsn() {
@@ -88,10 +49,10 @@ case "$CMD" in
         die "$THIS"
         ;;
     "build")
-        intellij_tarball IJ
+        ij_tarball IJ
         go_tarball GO
-        bazel_script BZ "0.19"
-        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$IJ GO_TARBALL=$GO BAZEL_SCRIPT=$BZ"
+        bazel_tarball BZ "0.19"
+        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$IJ GO_TARBALL=$GO BAZEL_TARBALL=$BZ"
         vsn VSN "$IMAGE"
         tag "$IMAGE" "$THIS" "$VSN"
         ;;

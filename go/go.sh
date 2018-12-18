@@ -4,6 +4,8 @@ set -eu
 
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
+# shellcheck source=../tarballs.sh
+. "$(dirname "$0")/../tarballs.sh"
 
 THIS="$(basename "$0" ".sh")"
 
@@ -15,19 +17,6 @@ usage() {
     echo "- emacs [DIR] - start emacs, mount host DIR to container CWD"
     echo "- build - build docker image from latest $THIS"
     exit 0
-}
-
-tarball() {
-    local VSN="$2"
-    local DLPAGE="https://golang.org/dl"
-    local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux-amd64.tar.gz"
-    local r
-
-    check curl
-    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
-    [ -z "$r" ] && err "no $THIS tarball at $DLPAGE."
-    echo "found tarball: $r"
-    eval "$1=https://dl.google.com/go/'$r'";
 }
 
 vsn() {
@@ -58,8 +47,8 @@ case "$CMD" in
         delete "$THIS"
         ;;
     "build")
-        tarball TARBALL "${2:-""}"
-        build IMAGE "base" "18.10" "GO_TARBALL=$TARBALL"
+        go_tarball GO_TARBALL ""
+        build IMAGE "base" "18.10" "GO_TARBALL=$GO_TARBALL"
         vsn VSN "$IMAGE"
         tag "$IMAGE" "$THIS" "$VSN"
         ;;

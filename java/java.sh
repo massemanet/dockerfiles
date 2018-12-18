@@ -4,6 +4,8 @@ set -eu
 
 # shellcheck source=../helpers.sh
 . "$(dirname "$0")/../helpers.sh"
+# shellcheck source=../tarballs.sh
+. "$(dirname "$0")/../tarballs.sh"
 
 THIS="$(basename "$0" ".sh")"
 
@@ -15,20 +17,6 @@ usage() {
     echo "- intellij [DIR] - start intellij, mount host DIR to container CWD"
     echo "- build - build docker image from ubuntu 17.10"
     exit 0
-}
-
-tarball() {
-    check curl
-    check jq
-    local DLPAGE="https://data.services.jetbrains.com"
-    DLPAGE+="/products/releases?code=IIC&latest=true&type=release"
-    local FILTER=".IIC[].downloads.linux.link"
-    local r
-
-    r="$(curl -sL "$DLPAGE" | jq -r "$FILTER")"
-    [ -z "$r" ] && err "no intellij tarball at $DLPAGE."
-    echo "found tarball: $r"
-    eval "$1='$r'";
 }
 
 vsn() {
@@ -57,8 +45,8 @@ case "$CMD" in
         die "$THIS"
         ;;
     "build")
-        tarball TARBALL
-        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$TARBALL"
+        ij_tarball IJ_TARBALL
+        build IMAGE "base" "18.10" "INTELLIJ_TARBALL=$IJ_TARBALL"
         vsn VSN "$IMAGE"
         tag "$IMAGE" "$THIS" "$VSN"
         ;;

@@ -50,9 +50,9 @@ ENV GOROOT /opt/go
 ENV PATH $GOROOT/bin:$PATH
 
 # install bazel
-ARG BAZEL_SCRIPT
+ARG BAZEL_TARBALL
 
-RUN curl -sSL ${BAZEL_SCRIPT} > /tmp/bazel.sh \
+RUN curl -sSL ${BAZEL_TARBALL} > /tmp/bazel.sh \
  && chmod +x /tmp/bazel.sh \
  && sudo bash -x /tmp/bazel.sh \
  && /usr/local/bin/bazel help \
