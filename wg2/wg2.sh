@@ -62,10 +62,10 @@ bazel_script() {
 vsn() {
     local r="0.0.0"
     local IMAGE="$2"
-    local C=("javac" "--version")
+    local C=("javac" "-version")
 
-    r="$(docker run "$IMAGE" "${C[@]}" | tr "~" "-" )"
-    r="$(echo "$r" | grep -oE "[0-9]+.[0-9a-z]+.[0-9]+")"
+    r="$(2>&1 docker run "$IMAGE" "${C[@]}")"
+    r="$(echo "$r" | grep -oE "[0-9]+\\.[0-9a-z]+\\.[0-9]+")"
     eval "$1='$r'"
 }
 

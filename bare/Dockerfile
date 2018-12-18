@@ -12,6 +12,7 @@ RUN yes | /usr/local/sbin/unminimize \
       bash-completion \
       build-essential \
       curl \
+      dnsutils \
       emacs-lucid \
       git \
       gosu \
@@ -19,6 +20,7 @@ RUN yes | /usr/local/sbin/unminimize \
       lsof \
       make \
       man \
+      netcat \
       pass \
       python-uinput \
       software-properties-common \

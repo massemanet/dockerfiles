@@ -3,7 +3,7 @@ FROM ${FROM_IMAGE}
 
 RUN sudo apt-get update \
  && sudo apt-get install -y \
-        default-jdk-headless \
+        openjdk-8-jdk-headless \
         g++ \
         pgadmin3 \
         pkg-config \
