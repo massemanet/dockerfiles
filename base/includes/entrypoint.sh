@@ -21,6 +21,14 @@ xpra --bind-tcp=0.0.0.0:14500 \
     sudo chmod a+rw /var/run/docker.sock  && \
     printf "docker socket: %s\\n" "$(ls -lF /var/run/docker.sock)"
 
+MAC="$(dig +short host.docker.internal)"
+[ -n "$MAC" ] \
+  && printf "127.0.0.1 loopback\\n%s localhost\\n%s %s\\n" \
+       "$(dig +short host.docker.internal)" \
+       "$(docker inspect $HOSTNAME | jq -r '.[].NetworkSettings.Networks.bridge.IPAddress')" \
+       "$HOSTNAME" | \
+     sudo tee /etc/hosts
+
 name="$(id -un "$uid")"
 if [ "$name" != "$(whoami)" ] && [ "$name" != "root" ]; then
     gosu "$name" /opt/includes/rearrange.sh

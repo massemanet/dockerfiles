@@ -16,7 +16,7 @@ usage() {
     echo "- bash [DIR] - start a shell, mount host DIR to container CWD"
     echo "- intellij [DIR] - start intellij, mount host DIR to container CWD"
     echo "- emacs [DIR] - start emacs, mount host DIR to container CWD"
-    echo "- build - installs java, intellij, erlang, wireshark"
+    echo "- build - installs java, intellij, erlang, go, wireshark"
     exit 0
 }
 
