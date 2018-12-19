@@ -43,9 +43,13 @@ RUN curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python \
  && chmod -R a+rw .
 
 # we want just the docker cli tool, not the engine
+# plus the bash completion
 RUN sudo apt-get install -y docker.io \
  && sudo cp "$(command -v docker)" /usr/local/bin \
- && sudo apt-get remove -y docker.io --auto-remove
+ && sudo apt-get remove -y docker.io --auto-remove \
+ && curl -v https://raw.githubusercontent.com/docker/docker-ce/master/components/cli/contrib/completion/bash/docker \
+        -o /tmp/bash_completion_docker.sh \
+ && sudo ln -s /tmp/bash_completion_docker.sh /etc/bash_completion.d
 
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/

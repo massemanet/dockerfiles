@@ -16,6 +16,8 @@ RUN yes | /usr/local/sbin/unminimize \
       emacs-lucid \
       git \
       gosu \
+      inetutils-ping \
+      inetutils-traceroute \
       jq \
       lsof \
       make \
