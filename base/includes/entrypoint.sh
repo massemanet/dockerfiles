@@ -26,7 +26,7 @@ MAC="$(dig +short host.docker.internal)"
        "$(dig +short host.docker.internal)" \
        "$(docker inspect "$(hostname)" | jq -r '.[].NetworkSettings.Networks.bridge.IPAddress')" \
        "$(hostname)" | \
-     sudo tee /etc/hosts
+     sudo tee /etc/hosts > /dev/null
 
 name="$(id -un "$uid")"
 if [ "$name" != "$(whoami)" ] && [ "$name" != "root" ]; then

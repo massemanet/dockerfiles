@@ -51,6 +51,8 @@ RUN sudo apt-get install -y docker.io \
         -o /tmp/bash_completion_docker.sh \
  && sudo ln -s /tmp/bash_completion_docker.sh /etc/bash_completion.d
 
+ENV PATH /usr/local/bin:$PATH
+
 # the entrypoint will move these files after it has created a user.
 COPY includes/ /opt/includes/
 

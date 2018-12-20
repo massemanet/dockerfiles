@@ -58,8 +58,6 @@ RUN curl -sSL ${BAZEL_TARBALL} > /tmp/bazel.sh \
  && /usr/local/bin/bazel help \
  && sudo ln -s /usr/local/lib/bazel/bin/bazel-complete.bash /etc/bash_completion.d
 
-ENV PATH /usr/local/bin:$PATH
-
 # finish
 COPY includes /opt/includes
 
