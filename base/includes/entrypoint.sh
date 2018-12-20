@@ -10,16 +10,23 @@ id "$uid" || useradd -s /bin/bash -u "$uid" -g "$gid" -m duser
 
 export XDG_RUNTIME_DIR=/tmp
 xpra --bind-tcp=0.0.0.0:14500 \
-     -d all \
      --start-via-proxy=no --dbus-proxy=no --notifications=no --dbus-launch=no \
      --notifications=no --pulseaudio=no --video-encoders=none --encoding=rgb \
      --speaker=disabled --microphone=disabled --webcam=no --mdns=no \
-     start
+     start :100
 
 [ -e /var/run/docker.sock ] && \
     printf "found docker socket\\n" && \
     sudo chmod a+rw /var/run/docker.sock  && \
     printf "docker socket: %s\\n" "$(ls -lF /var/run/docker.sock)"
+
+MAC="$(dig +short host.docker.internal)"
+[ -n "$MAC" ] \
+  && printf "127.0.0.1 loopback\\n%s localhost\\n%s %s\\n" \
+       "$(dig +short host.docker.internal)" \
+       "$(docker inspect "$(hostname)" | jq -r '.[].NetworkSettings.Networks.bridge.IPAddress')" \
+       "$(hostname)" | \
+     sudo tee /etc/hosts
 
 name="$(id -un "$uid")"
 if [ "$name" != "$(whoami)" ] && [ "$name" != "root" ]; then
