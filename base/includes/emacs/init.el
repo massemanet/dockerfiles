@@ -11,7 +11,6 @@
 
 (if (memq window-system '(mac ns x))
     (progn
-      (exec-path-from-shell-initialize)
       (load-theme 'gruvbox-dark-hard t)))
 
 ;; add legacy
