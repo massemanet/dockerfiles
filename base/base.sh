@@ -21,8 +21,10 @@ vsn() {
     local r="0.0.0"
     local IMAGE="$2"
     local C=("cat" "/etc/lsb-release")
+    local RES
 
-    r="$(docker run "$IMAGE" "${C[@]}" | grep RELEASE | cut -f2 -d"=")"
+    drun RES "$IMAGE" C
+    r="$(echo "$RES" | grep RELEASE | cut -f2 -d"=")"
     eval "$1='$r'"
 }
 

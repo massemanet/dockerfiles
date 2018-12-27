@@ -18,6 +18,7 @@ RUN yes | /usr/local/sbin/unminimize \
       gosu \
       inetutils-ping \
       inetutils-traceroute \
+      iproute2 \
       jq \
       lsof \
       make \

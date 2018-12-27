@@ -65,6 +65,10 @@ flags() {
     f="/var/run/docker.sock"
     [ -e "$f" ] && MOUNTS+=" -v $f:$f"
 
+    # mount the X11 socket
+    f="/tmp/.X11-unix"
+    [ -e "$f" ] && MOUNTS+=" -v $f:$f"
+
     # read-write host files
     for f in ~/.awsvault ~/.cache ~/.intellij ~/.password-store ~/.ssh ~/.vscode
     do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f"):cached"
@@ -74,6 +78,8 @@ flags() {
     for f in ~/.aws ~/.gitconfig ~/.gnupg ~/.kube
     do [ -e "$f" ] && MOUNTS+=" -v $f:/tmp/$(basename "$f"):ro"
     done
+
+    echo "mounts: $MOUNTS"
 
     r=" --rm $DETACH $MOUNTS $SECCOMP"
     eval "$1='$r'";
@@ -141,8 +147,12 @@ build() {
     done
 
 # check that we have a base image
-    FROM="$(docker images | grep "$FROM_NAME" | grep "$FROM_VSN")"
-    [ -z "$FROM" ] && err "no base image ${FROM_NAME}:${FROM_VSN}"
+    if ! FROM="$(docker images | grep "$FROM_NAME" | grep "$FROM_VSN")"; then
+        if docker pull "$FROM_NAME:$FROM_VSN"
+        then echo "pulled $FROM_NAME:$FROM_VSN"
+        else err "no base image ${FROM_NAME}:${FROM_VSN}"
+        fi
+    fi
     FROM="$(echo "$FROM" | sort -V | tail -n1 | awk '{print $1 ":" $2}')"
     [ -z "$FROM" ] && err "no base image ${FROM_NAME}:${FROM_VSN}"
     C+=("--build-arg" "FROM_IMAGE=$FROM")
@@ -179,4 +189,13 @@ tag() {
     fi
     echo "tagging $TAG"
     docker tag "$IMAGE" "$TAG"
+}
+
+drun() {
+    local IMAGE="$2"
+    local -n ARGS=$3
+
+    r="$(docker run "$IMAGE" "${ARGS[@]}")" || err "docker run fail: ${ARGS[*]}"
+    [ -z "$r" ] && err "build failed"
+    eval "${1}=\$r"
 }

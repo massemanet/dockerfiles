@@ -60,4 +60,3 @@ RUN curl -sSL ${BAZEL_TARBALL} > /tmp/bazel.sh \
 
 # finish
 COPY includes /opt/includes
-
