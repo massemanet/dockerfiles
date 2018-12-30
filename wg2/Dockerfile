@@ -4,6 +4,7 @@ FROM ${FROM_IMAGE}
 RUN sudo apt-get update \
  && sudo apt-get install -y \
         openjdk-8-jdk-headless \
+        openjdk-11-jdk-headless \
         g++ \
         pgadmin3 \
         pkg-config \
