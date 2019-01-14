@@ -16,24 +16,38 @@ check() {
     echo " ok"
 }
 
-find_free_port() {
-    local r P
-
-    P=$(docker ps --format "{{.Ports}}")
-    if [ "$P" == "" ]
-    then r=14500
-    else r=$(($(echo "$P" | cut -f2 -d":" | cut -f1 -d"-" | sort | tail -n1)+1))
-    fi
-    echo $r
-    eval "$1='$r'";
-}
-
-# client - xpra attach --swap-keys=NO tcp:127.0.0.1:14500
 xconf() {
     local r=""
 
-    find_free_port PORT
-    r="-p:$PORT:14500"
+    case "$(uname)" in
+        "Darwin")
+            echo -n "Checking Xquartz... "
+            if type Xquartz &> /dev/null; then
+                xhost +127.0.0.1 >/dev/null
+                defaults write org.macosforge.xquartz.X11 app_to_run /usr/bin/true
+                defaults write org.macosforge.xquartz.X11 no_auth 1
+                defaults write org.macosforge.xquartz.X11 nolisten_tcp 0
+                pgrep -q Xquartz || open -Fga Xquartz.app
+                r="-e DISPLAY=:0 \
+                   -v /tmp/.X11-unix:/tmp/.X11-unix"
+                echo "ok."
+            else
+                echo "You don't have Xquartz. Disabling X."
+            fi
+            ;;
+        "Linux")
+            if [ -n "${DISPLAY:+x}" ]; then
+                r="-e DISPLAY=unix$DISPLAY \
+                   -v /tmp/.X11-unix:/tmp/.X11-unix"
+                echo "X is running on DISPLAY $DISPLAY."
+            else
+                echo "You don't have X. SAD!"
+            fi
+            ;;
+        *)
+            err "Your system is unsupported ($(uname))"
+            ;;
+    esac
     eval "$1='$r'";
 }
 
@@ -56,6 +70,7 @@ flags() {
     local WRKDIR="/opt/wrk"
     local SECCOMP="--cap-add SYS_PTRACE"
 
+    mkdir -p "$VOL"
     if uname -a | grep -q 'Microsoft'
     then MOUNTS="-v \"$(sed 's|/mnt/\([a-z]\)|\1:|' <<< "$VOL")\":$WRKDIR"
     else MOUNTS="-v $VOL:$WRKDIR:cached"
@@ -63,10 +78,6 @@ flags() {
 
     # mount the socket to the docker daemon
     f="/var/run/docker.sock"
-    [ -e "$f" ] && MOUNTS+=" -v $f:$f"
-
-    # mount the X11 socket
-    f="/tmp/.X11-unix"
     [ -e "$f" ] && MOUNTS+=" -v $f:$f"
 
     # read-write host files
@@ -91,13 +102,11 @@ go() {
     local CMD="$3"
     local VOL="$4"
 
-    mkdir -p "$VOL"
     check docker
     find_image IMAGE "$TARGET"
     xconf XFLAGS
     flags FLAGS "$VOL"
-    echo "found image $IMAGE"
-    echo "mounting $VOL"
+
     eval docker run "-e DOCKER=$TARGET $FLAGS $USERFLAGS $XFLAGS $IMAGE $CMD"
 }
 

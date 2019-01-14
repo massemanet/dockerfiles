@@ -19,7 +19,9 @@ ARG INTELLIJ_TARBALL
 
 RUN mkdir /opt/intellij \
  && curl -v -L ${INTELLIJ_TARBALL} | \
-      tar -C /opt/intellij -xz --strip-components=1 -f -
+      tar -C /opt/intellij -xz --strip-components=1 -f - \
+ && cd /opt/intellij/bin \
+ && ln -s idea.sh intellij
 
 ENV PATH /opt/intellij/bin:$PATH
 
