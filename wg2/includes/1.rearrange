@@ -1,14 +1,20 @@
 #!/bin/bash
+
+# config for intellij
+copy idea.properties "$HOME"
+
+# configure bazel
 OUTSIDE="/tmp/.cache"
 INSIDE="$HOME/.cache"
 BAZEL="bazel/_bazel_$(id -nu)"
 TMP="/tmp/bazel"
 
-[ ! -d "$OUTSIDE" ] && exit 0
-mkdir -p "$OUTSIDE/$BAZEL" || exit 1
-mkdir -p "$(dirname "$TMP")" && mv "$INSIDE/$BAZEL" "$TMP"
-ln -s "$OUTSIDE/$BAZEL" "$INSIDE/$BAZEL"
-for i in "$TMP"/*/*
-do o="$OUTSIDE/$BAZEL/$(basename "$i")"
-   [ -e "$i" ] && [ ! -e "$o" ] && cp -r "$i" "$o"
-done
+if [ -d "$OUTSIDE" ]; then
+    mkdir -p "$OUTSIDE/$BAZEL" || exit 1
+    mkdir -p "$(dirname "$TMP")" && mv "$INSIDE/$BAZEL" "$TMP"
+    ln -s "$OUTSIDE/$BAZEL" "$INSIDE/$BAZEL"
+    for i in "$TMP"/*/*
+    do o="$OUTSIDE/$BAZEL/$(basename "$i")"
+       [ -e "$i" ] && [ ! -e "$o" ] && cp -r "$i" "$o"
+    done
+fi
