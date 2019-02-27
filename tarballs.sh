@@ -7,7 +7,6 @@ go_tarball() {
     local RE="go[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?\\.linux"
     local r
 
-    check curl
     r="$(curl -sL "$RELPAGE" | grep -oE "$RE" | sort -V | grep "$VSN" | tail -n1)"
     [ -z "$r" ] && err "no go tarball at $RELPAGE."
     echo "found tarball: $r"
@@ -21,8 +20,6 @@ ij_tarball() {
     local FILTER=".IIC[].downloads.linux.link"
     local r
 
-    check curl
-    check jq
     r="$(curl -sL "$DLPAGE" | jq -r "$FILTER")"
     [ -z "$r" ] && err "no intellij tarball at $DLPAGE."
     echo "found tarball: $r"
@@ -35,7 +32,6 @@ bazel_tarball() {
     local RE="download/[.0-9-]+/bazel-[.0-9-]+-installer-linux-x86_64.sh"
     local r
 
-    check curl
     r="$(curl -sSL "$GH" | grep -Eo "$RE" | grep "$VSN" | sort -Vu | tail -n1)"
     echo "found bazel script $r"
     r="$GH/$r"
@@ -48,10 +44,20 @@ julia_tarball() {
     local RE="https://[^\"]+/julia-[0-9\\.]+-linux-x86_64.tar.gz"
     local r
 
-    check curl
     r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
     [ -z "$r" ] && err "no julia tarball at $DLPAGE."
     echo "found tarball: $r"
     eval "$1='$r'";
 }
 
+docker-compose-file() {
+    local VSN="${2:-}"
+    local DLPAGE="https://github.com/docker/compose/releases"
+    local RE="download/[0-9\\.]+/docker-compose-Linux-x86_64[^\\.]"
+
+    r="$(curl -sL "$DLPAGE" | grep -oE "$RE" | grep "$VSN" | sort -uV | tail -n1)"
+    [ -z "$r" ] && err "no docker-compose file at $DLPAGE."
+    echo "found file: $r"
+    r="$DLPAGE/$r"
+    eval "$1='$r'";
+}

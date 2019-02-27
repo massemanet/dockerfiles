@@ -13,7 +13,8 @@ RUN sudo apt-get update \
         wireshark-gtk \
         zip \
         zlib1g-dev \
- && sudo apt-get clean
+ && sudo apt-get clean \
+ && sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
 
 # install intellij
 ARG INTELLIJ_TARBALL
